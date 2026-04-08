@@ -5,6 +5,7 @@ import { FormEvent, useMemo, useState } from "react";
 type Menu = "pemasukan" | "pengeluaran";
 
 type IncomeForm = {
+  tanggal: string;
   namaMenu: string;
   kategori: string;
   hargaSatuan: string;
@@ -13,6 +14,7 @@ type IncomeForm = {
 };
 
 type ExpenseForm = {
+  tanggal: string;
   keterangan: string;
   unit: string;
   hargaSatuan: string;
@@ -22,6 +24,7 @@ type ExpenseForm = {
 type Transaction = {
   id: number;
   type: Menu;
+  date: string;
   title: string;
   amount: number;
   balanceAfter: number;
@@ -34,6 +37,7 @@ type ProductMenu = {
 };
 
 const emptyIncome: IncomeForm = {
+  tanggal: new Date().toISOString().split("T")[0] ?? "",
   namaMenu: "",
   kategori: "",
   hargaSatuan: "",
@@ -42,6 +46,7 @@ const emptyIncome: IncomeForm = {
 };
 
 const emptyExpense: ExpenseForm = {
+  tanggal: new Date().toISOString().split("T")[0] ?? "",
   keterangan: "",
   unit: "",
   hargaSatuan: "",
@@ -126,6 +131,7 @@ export default function Home() {
       {
         id: Date.now(),
         type: "pemasukan",
+        date: income.tanggal,
         title: income.namaMenu,
         amount: incomeTotal,
         balanceAfter: nextBalance,
@@ -148,6 +154,7 @@ export default function Home() {
       {
         id: Date.now(),
         type: "pengeluaran",
+        date: expense.tanggal,
         title: expense.keterangan,
         amount: expenseTotal,
         balanceAfter: nextBalance,
@@ -318,6 +325,11 @@ export default function Home() {
                   title="Catat uang masuk BS"
                   description="Saldo akhir otomatis dihitung dari Saldo BS ditambah Harga total."
                 />
+                <DateInput
+                  label="Tanggal"
+                  value={income.tanggal}
+                  onChange={(value) => setIncome({ ...income, tanggal: value })}
+                />
                 <SelectInput
                   label="Nama menu"
                   value={income.namaMenu}
@@ -332,26 +344,22 @@ export default function Home() {
                   label="Kategori"
                   value={income.kategori}
                   onChange={(value) => setIncome({ ...income, kategori: value })}
-                  placeholder="Kategori mengikuti menu"
+                  placeholder="Terisi otomatis setelah pilih nama menu"
                   readOnly
+                  disabled
                 />
                 <div className="grid gap-5 md:grid-cols-2">
-                  <SelectInput
+                  <TextInput
                     label="Harga satuan"
-                    value={income.hargaSatuan}
-                    onChange={(value) => setIncome({ ...income, hargaSatuan: value })}
-                    placeholder="Pilih menu dulu"
-                    disabled={!income.namaMenu}
-                    options={
+                    value={
                       income.hargaSatuan
-                        ? [
-                            {
-                              label: formatRupiah(parseMoney(income.hargaSatuan)),
-                              value: income.hargaSatuan,
-                            },
-                          ]
-                        : []
+                        ? formatRupiah(parseMoney(income.hargaSatuan))
+                        : ""
                     }
+                    onChange={() => undefined}
+                    placeholder="Terisi otomatis setelah pilih nama menu"
+                    readOnly
+                    disabled
                   />
                   <TextInput
                     label="Unit"
@@ -377,6 +385,11 @@ export default function Home() {
                   eyebrow="Form Pengeluaran"
                   title="Catat uang keluar BS"
                   description="Saldo akhir otomatis dihitung dari Saldo BS dikurangi Total harga."
+                />
+                <DateInput
+                  label="Tanggal"
+                  value={expense.tanggal}
+                  onChange={(value) => setExpense({ ...expense, tanggal: value })}
                 />
                 <TextInput
                   label="Nama keterangan pengeluaran"
@@ -435,6 +448,9 @@ export default function Home() {
                         <p className="mt-1 text-sm capitalize text-[#6a594b]">
                           {transaction.type}
                         </p>
+                        <p className="mt-1 text-sm text-[#6a594b]">
+                          Tanggal: {transaction.date}
+                        </p>
                       </div>
                       <p
                         className={`font-black ${
@@ -490,6 +506,7 @@ function TextInput({
   placeholder,
   inputMode,
   readOnly = false,
+  disabled = false,
 }: {
   label: string;
   value: string;
@@ -497,6 +514,34 @@ function TextInput({
   placeholder: string;
   inputMode?: "numeric";
   readOnly?: boolean;
+  disabled?: boolean;
+}) {
+  return (
+    <label className="block">
+      <span className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
+        {label}
+      </span>
+      <input
+        className="mt-2 w-full rounded-2xl border border-[#251a12]/15 bg-white px-5 py-4 text-lg outline-none transition placeholder:text-[#8f7d6d] focus:border-[#2f7d6d] focus:ring-4 focus:ring-[#2f7d6d]/15 disabled:cursor-not-allowed disabled:bg-[#efe4d0] disabled:text-[#6a594b]"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        inputMode={inputMode}
+        readOnly={readOnly}
+        disabled={disabled}
+      />
+    </label>
+  );
+}
+
+function DateInput({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
 }) {
   return (
     <label className="block">
@@ -505,11 +550,9 @@ function TextInput({
       </span>
       <input
         className="mt-2 w-full rounded-2xl border border-[#251a12]/15 bg-white px-5 py-4 text-lg outline-none transition focus:border-[#2f7d6d] focus:ring-4 focus:ring-[#2f7d6d]/15"
+        type="date"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        inputMode={inputMode}
-        readOnly={readOnly}
       />
     </label>
   );
