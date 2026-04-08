@@ -332,52 +332,53 @@ export default function Home() {
 
   if (!isLoggedIn) {
     return (
-      <main className="min-h-screen overflow-hidden bg-[#f5efe3] text-[#251a12]">
+      <main className="min-h-screen overflow-hidden bg-slate-50 text-slate-900">
         <section className="relative grid min-h-screen place-items-center px-6 py-10">
-          <div className="absolute -left-24 top-10 h-72 w-72 rounded-full bg-[#e8b04b]/40 blur-3xl" />
-          <div className="absolute -right-20 bottom-4 h-80 w-80 rounded-full bg-[#2f7d6d]/30 blur-3xl" />
-          <div className="relative w-full max-w-5xl overflow-hidden rounded-[2rem] border border-[#251a12]/10 bg-[#fffaf0]/85 shadow-2xl shadow-[#251a12]/15 backdrop-blur">
+          {/* Abstract background elements */}
+          <div className="absolute -left-24 top-10 h-96 w-96 rounded-full bg-emerald-400/20 blur-3xl" />
+          <div className="absolute -right-20 bottom-4 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl" />
+          
+          <div className="relative w-full max-w-5xl overflow-hidden rounded-[2rem] border border-white/50 bg-white/70 shadow-2xl shadow-slate-200/50 backdrop-blur-xl">
             <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
-              <div className="flex min-h-[520px] flex-col justify-between bg-[#243b35] p-8 text-[#fffaf0] sm:p-12">
+              <div className="flex min-h-[520px] flex-col justify-between bg-emerald-950 p-8 text-white sm:p-12">
                 <div>
-                  <p className="text-sm font-bold uppercase tracking-[0.35em] text-[#f4c86a]">
+                  <p className="text-sm font-bold uppercase tracking-[0.35em] text-emerald-400">
                     BSC Cashflow
                   </p>
-                  <h1 className="mt-10 max-w-xl text-5xl font-black leading-[0.95] tracking-[-0.06em] sm:text-7xl">
+                  <h1 className="mt-10 max-w-xl text-5xl font-black leading-[1.05] tracking-tight sm:text-7xl">
                     Pantau uang BS tanpa ribet.
                   </h1>
                 </div>
-                <div className="rounded-3xl border border-white/15 bg-white/10 p-5">
-                  <p className="text-sm uppercase tracking-[0.25em] text-[#f4c86a]">
+                <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+                  <p className="text-sm uppercase tracking-[0.25em] text-emerald-400">
                     Akses internal
                   </p>
-                  <p className="mt-3 text-lg leading-8 text-white/80">
-                    Masuk dengan username dan password untuk langsung menuju
-                    halaman utama pengelolaan saldo.
+                  <p className="mt-3 text-lg leading-relaxed text-emerald-50/80">
+                    Masuk dengan username dan password untuk langsung menuju halaman utama pengelolaan saldo.
                   </p>
                 </div>
               </div>
 
               <div className="p-8 sm:p-12">
                 <div className="mb-10">
-                  <p className="text-sm font-bold uppercase tracking-[0.3em] text-[#2f7d6d]">
+                  <p className="text-sm font-bold uppercase tracking-[0.3em] text-emerald-600">
                     Login
                   </p>
-                  <h2 className="mt-3 text-4xl font-black tracking-[-0.05em]">
+                  <h2 className="mt-3 text-4xl font-black tracking-tight text-slate-900">
                     Selamat datang.
                   </h2>
-                  <p className="mt-3 text-[#6a594b]">
+                  <p className="mt-3 text-slate-500">
                     Tidak ada pembuatan akun baru di halaman ini.
                   </p>
                 </div>
 
-                <form className="space-y-5" onSubmit={handleLogin}>
+                <form className="space-y-6" onSubmit={handleLogin}>
                   <label className="block">
-                    <span className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
+                    <span className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
                       Username
                     </span>
                     <input
-                      className="mt-2 w-full rounded-2xl border border-[#251a12]/15 bg-white px-5 py-4 text-lg outline-none transition focus:border-[#2f7d6d] focus:ring-4 focus:ring-[#2f7d6d]/15"
+                      className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
                       value={username}
                       onChange={(event) => setUsername(event.target.value)}
                       placeholder="contoh: admin-bs"
@@ -386,11 +387,11 @@ export default function Home() {
                   </label>
 
                   <label className="block">
-                    <span className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
+                    <span className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
                       Password
                     </span>
                     <input
-                      className="mt-2 w-full rounded-2xl border border-[#251a12]/15 bg-white px-5 py-4 text-lg outline-none transition focus:border-[#2f7d6d] focus:ring-4 focus:ring-[#2f7d6d]/15"
+                      className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
                       value={password}
                       onChange={(event) => setPassword(event.target.value)}
                       placeholder="Masukkan password"
@@ -399,7 +400,7 @@ export default function Home() {
                     />
                   </label>
 
-                  <button className="w-full rounded-2xl bg-[#251a12] px-5 py-4 text-lg font-black text-[#fffaf0] transition hover:-translate-y-0.5 hover:bg-[#2f7d6d] focus:outline-none focus:ring-4 focus:ring-[#2f7d6d]/25">
+                  <button className="mt-2 w-full rounded-2xl bg-slate-900 px-5 py-4 text-lg font-black text-white shadow-lg shadow-slate-900/20 transition-all hover:-translate-y-1 hover:bg-emerald-600 hover:shadow-emerald-600/30 focus:outline-none focus:ring-4 focus:ring-emerald-600/25">
                     Masuk ke Dashboard
                   </button>
                 </form>
@@ -412,56 +413,56 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f5efe3] px-4 py-6 text-[#251a12] sm:px-6 lg:px-10">
+    <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900 sm:px-6 lg:px-10">
       <section className="mx-auto max-w-7xl">
-        <header className="overflow-hidden rounded-[2rem] bg-[#243b35] text-[#fffaf0] shadow-2xl shadow-[#251a12]/15">
+        <header className="overflow-hidden rounded-[2rem] bg-emerald-950 text-white shadow-2xl shadow-emerald-900/10">
           <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_380px] lg:p-10">
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.35em] text-[#f4c86a]">
+              <p className="text-sm font-bold uppercase tracking-[0.35em] text-emerald-400">
                 BSC Cashflow
               </p>
-              <h1 className="mt-5 text-4xl font-black tracking-[-0.06em] sm:text-6xl">
+              <h1 className="mt-5 text-4xl font-black tracking-tight sm:text-6xl">
                 Dashboard kas BS
               </h1>
-              <p className="mt-4 max-w-2xl text-lg leading-8 text-white/75">
+              <p className="mt-4 max-w-2xl text-lg leading-relaxed text-emerald-50/80">
                 Kelola pemasukan dan pengeluaran, lalu lihat saldo akhir BS
                 berubah otomatis setiap transaksi disimpan.
               </p>
             </div>
-            <div className="rounded-[1.5rem] border border-white/15 bg-white/10 p-6">
-              <p className="text-sm font-bold uppercase tracking-[0.25em] text-[#f4c86a]">
+            <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+              <p className="text-sm font-bold uppercase tracking-[0.25em] text-emerald-400">
                 Saldo BS
               </p>
-              <p className="mt-4 text-4xl font-black tracking-[-0.06em] sm:text-5xl">
+              <p className="mt-4 text-4xl font-black tracking-tight sm:text-5xl">
                 {formatRupiah(balance)}
               </p>
-              <p className="mt-3 text-sm text-white/65">Total kekayaan BS saat ini</p>
+              <p className="mt-3 text-sm text-emerald-50/60">Total kekayaan BS saat ini</p>
             </div>
           </div>
         </header>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
-          <aside className="rounded-[2rem] border border-[#251a12]/10 bg-[#fffaf0] p-5 shadow-xl shadow-[#251a12]/10 sm:p-6">
-            <p className="text-sm font-bold uppercase tracking-[0.3em] text-[#2f7d6d]">
+        <div className="mt-8 grid gap-6 lg:grid-cols-[280px_1fr]">
+          <aside className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/50 sm:p-6">
+            <p className="text-sm font-bold uppercase tracking-[0.3em] text-emerald-600">
               Sidebar
             </p>
-            <h2 className="mt-3 text-3xl font-black tracking-[-0.05em]">
+            <h2 className="mt-3 text-3xl font-black tracking-tight">
               Navigasi
             </h2>
             <div className="mt-6 grid gap-3">
               <button
                 type="button"
-                className={`rounded-3xl px-5 py-4 text-left transition ${
+                className={`rounded-3xl px-5 py-4 text-left transition-all ${
                   activeView === "dashboard"
-                    ? "bg-[#243b35] text-white shadow-lg shadow-[#243b35]/20"
-                    : "bg-[#efe4d0] text-[#251a12] hover:bg-[#e6d7bc]"
+                    ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                 }`}
                 onClick={() => setActiveView("dashboard")}
               >
                 <p className="font-black">Dashboard</p>
                 <p
                   className={`mt-1 text-sm ${
-                    activeView === "dashboard" ? "text-white/70" : "text-[#6a594b]"
+                    activeView === "dashboard" ? "text-emerald-50" : "text-slate-500"
                   }`}
                 >
                   Saldo BS, pemasukan, dan pengeluaran.
@@ -469,17 +470,17 @@ export default function Home() {
               </button>
               <button
                 type="button"
-                className={`rounded-3xl px-5 py-4 text-left transition ${
+                className={`rounded-3xl px-5 py-4 text-left transition-all ${
                   activeView === "riwayat"
-                    ? "bg-[#243b35] text-white shadow-lg shadow-[#243b35]/20"
-                    : "bg-[#efe4d0] text-[#251a12] hover:bg-[#e6d7bc]"
+                    ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                 }`}
                 onClick={() => setActiveView("riwayat")}
               >
                 <p className="font-black">Riwayat Transaksi</p>
                 <p
                   className={`mt-1 text-sm ${
-                    activeView === "riwayat" ? "text-white/70" : "text-[#6a594b]"
+                    activeView === "riwayat" ? "text-emerald-50" : "text-slate-500"
                   }`}
                 >
                   Semua riwayat dan filter per tanggal.
@@ -489,14 +490,14 @@ export default function Home() {
           </aside>
 
           {activeView === "dashboard" ? (
-            <section className="rounded-[2rem] border border-[#251a12]/10 bg-[#fffaf0] p-5 shadow-xl shadow-[#251a12]/10 sm:p-8">
-              <div className="grid gap-3 rounded-3xl bg-[#efe4d0] p-2 sm:grid-cols-2">
+            <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/50 sm:p-8">
+              <div className="grid gap-3 rounded-3xl bg-slate-100 p-2 sm:grid-cols-2">
                 <button
                   type="button"
-                  className={`rounded-2xl px-5 py-4 text-left font-black transition ${
+                  className={`rounded-2xl px-5 py-4 text-left font-black transition-all ${
                     activeMenu === "pemasukan"
-                      ? "bg-[#2f7d6d] text-white shadow-lg shadow-[#2f7d6d]/25"
-                      : "text-[#6a594b] hover:bg-white/70"
+                      ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/25"
+                      : "text-slate-600 hover:bg-white"
                   }`}
                   onClick={() => setActiveMenu("pemasukan")}
                 >
@@ -504,10 +505,10 @@ export default function Home() {
                 </button>
                 <button
                   type="button"
-                  className={`rounded-2xl px-5 py-4 text-left font-black transition ${
+                  className={`rounded-2xl px-5 py-4 text-left font-black transition-all ${
                     activeMenu === "pengeluaran"
-                      ? "bg-[#9d3f2f] text-white shadow-lg shadow-[#9d3f2f]/20"
-                      : "text-[#6a594b] hover:bg-white/70"
+                      ? "bg-rose-600 text-white shadow-md shadow-rose-600/25"
+                      : "text-slate-600 hover:bg-white"
                   }`}
                   onClick={() => setActiveMenu("pengeluaran")}
                 >
@@ -614,43 +615,43 @@ export default function Home() {
               )}
             </section>
           ) : (
-            <section className="rounded-[2rem] border border-[#251a12]/10 bg-[#fffaf0] p-5 shadow-xl shadow-[#251a12]/10 sm:p-8">
+            <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/50 sm:p-8">
               <FormTitle
                 eyebrow="Riwayat"
                 title="Riwayat Transaksi"
                 description="Lihat semua transaksi, lalu persempit berdasarkan tahun, bulan, dan hari."
               />
               <div className="mt-8 grid gap-5 xl:grid-cols-[1.2fr_1fr_1fr_1fr]">
-                <div className="rounded-3xl border border-[#251a12]/10 bg-[#efe4d0] p-5">
-                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
                     Semua riwayat
                   </p>
                   <button
                     type="button"
-                    className={`mt-4 w-full rounded-2xl px-4 py-3 text-sm font-black transition ${
+                    className={`mt-4 w-full rounded-2xl border px-4 py-3 text-sm font-black transition-all ${
                       historyYearFilter === "" &&
                       historyMonthFilter === "" &&
                       historyDayFilter === ""
-                        ? "bg-[#243b35] text-white"
-                        : "bg-white text-[#251a12] hover:bg-[#f9f3e7]"
+                        ? "border-slate-900 bg-slate-900 text-white shadow-md shadow-slate-900/20"
+                        : "border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-100"
                     }`}
                     onClick={resetHistoryFilters}
                   >
                     Tampilkan semua transaksi
                   </button>
                 </div>
-                <div className="rounded-3xl border border-[#251a12]/10 bg-[#efe4d0] p-5">
-                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
                     Tahun
                   </p>
                   <div className="mt-4 flex flex-wrap gap-3">
                     {uniqueTransactionYears.map((year) => (
                       <button
                         type="button"
-                        className={`rounded-2xl px-4 py-3 text-sm font-black transition ${
+                        className={`rounded-2xl border px-4 py-3 text-sm font-black transition-all ${
                           historyYearFilter === year
-                            ? "bg-[#2f7d6d] text-white"
-                            : "bg-white text-[#251a12] hover:bg-[#f9f3e7]"
+                            ? "border-emerald-600 bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
+                            : "border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-100"
                         }`}
                         key={year}
                         onClick={() => selectHistoryYear(year)}
@@ -660,23 +661,23 @@ export default function Home() {
                     ))}
                   </div>
                 </div>
-                <div className="rounded-3xl border border-[#251a12]/10 bg-[#efe4d0] p-5">
-                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
                     Bulan
                   </p>
                   <div className="mt-4 flex flex-wrap gap-3">
                     {availableMonths.length === 0 ? (
-                      <p className="text-sm text-[#6a594b]">
+                      <p className="text-sm text-slate-500">
                         Pilih tahun terlebih dahulu.
                       </p>
                     ) : (
                       availableMonths.map((month) => (
                         <button
                           type="button"
-                          className={`rounded-2xl px-4 py-3 text-sm font-black transition ${
+                          className={`rounded-2xl border px-4 py-3 text-sm font-black transition-all ${
                             historyMonthFilter === month
-                              ? "bg-[#2f7d6d] text-white"
-                              : "bg-white text-[#251a12] hover:bg-[#f9f3e7]"
+                              ? "border-emerald-600 bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
+                              : "border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-100"
                           }`}
                           key={month}
                           onClick={() => selectHistoryMonth(month)}
@@ -687,23 +688,23 @@ export default function Home() {
                     )}
                   </div>
                 </div>
-                <div className="rounded-3xl border border-[#251a12]/10 bg-[#efe4d0] p-5">
-                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
                     Hari
                   </p>
                   <div className="mt-4 flex flex-wrap gap-3">
                     {availableDays.length === 0 ? (
-                      <p className="text-sm text-[#6a594b]">
+                      <p className="text-sm text-slate-500">
                         Pilih bulan terlebih dahulu.
                       </p>
                     ) : (
                       availableDays.map((day) => (
                         <button
                           type="button"
-                          className={`rounded-2xl px-4 py-3 text-sm font-black transition ${
+                          className={`rounded-2xl border px-4 py-3 text-sm font-black transition-all ${
                             historyDayFilter === day
-                              ? "bg-[#2f7d6d] text-white"
-                              : "bg-white text-[#251a12] hover:bg-[#f9f3e7]"
+                              ? "border-emerald-600 bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
+                              : "border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-100"
                           }`}
                           key={day}
                           onClick={() => setHistoryDayFilter(day)}
@@ -718,18 +719,18 @@ export default function Home() {
 
               <div className="mt-8 space-y-6">
                 {transactions.length === 0 ? (
-                  <p className="rounded-3xl bg-[#efe4d0] p-5 text-[#6a594b]">
+                  <p className="rounded-3xl border border-slate-200 bg-slate-50 p-5 text-slate-500">
                     Belum ada transaksi. Simpan pemasukan atau pengeluaran pertama
                     untuk mulai membentuk saldo BS.
                   </p>
                 ) : filteredTransactions.length === 0 ? (
-                  <p className="rounded-3xl bg-[#efe4d0] p-5 text-[#6a594b]">
+                  <p className="rounded-3xl border border-slate-200 bg-slate-50 p-5 text-slate-500">
                     Tidak ada transaksi pada tanggal yang dipilih.
                   </p>
                 ) : (
                   filteredTransactions.map((transaction) => (
                     <article
-                      className="rounded-3xl border border-[#251a12]/10 bg-white p-5"
+                      className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
                       key={transaction.id}
                     >
                       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -737,19 +738,19 @@ export default function Home() {
                           <div
                             className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-xl font-black ${
                               transaction.type === "pemasukan"
-                                ? "bg-[#d9efe9] text-[#2f7d6d]"
-                                : "bg-[#f4ddd8] text-[#9d3f2f]"
+                                ? "bg-emerald-100 text-emerald-600"
+                                : "bg-rose-100 text-rose-600"
                             }`}
                           >
                             {transaction.type === "pemasukan" ? "+" : "-"}
                           </div>
                           <div>
-                          <p className="font-black">{transaction.title}</p>
+                          <p className="font-black text-slate-900">{transaction.title}</p>
                           <div className="mt-2 flex flex-wrap gap-2">
-                            <span className="rounded-full bg-[#efe4d0] px-3 py-1 text-sm capitalize text-[#6a594b]">
+                            <span className="rounded-full bg-slate-100 px-3 py-1 text-sm capitalize text-slate-600">
                               {transaction.type}
                             </span>
-                            <span className="rounded-full bg-[#efe4d0] px-3 py-1 text-sm text-[#6a594b]">
+                            <span className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-600">
                               {formatDate(transaction.date)}
                             </span>
                           </div>
@@ -758,15 +759,15 @@ export default function Home() {
                         <p
                           className={`text-lg font-black ${
                             transaction.type === "pemasukan"
-                              ? "text-[#2f7d6d]"
-                              : "text-[#9d3f2f]"
+                              ? "text-emerald-600"
+                              : "text-rose-600"
                           }`}
                         >
                           {transaction.type === "pemasukan" ? "+" : "-"}
                           {formatRupiah(transaction.amount)}
                         </p>
                       </div>
-                      <p className="mt-4 text-sm text-[#6a594b]">
+                      <p className="mt-4 text-sm text-slate-500">
                         Saldo akhir: {formatRupiah(transaction.balanceAfter)}
                       </p>
                     </article>
@@ -792,13 +793,13 @@ function FormTitle({
 }) {
   return (
     <div>
-      <p className="text-sm font-bold uppercase tracking-[0.3em] text-[#2f7d6d]">
+      <p className="text-sm font-bold uppercase tracking-[0.3em] text-emerald-600">
         {eyebrow}
       </p>
-      <h2 className="mt-3 text-3xl font-black tracking-[-0.05em] sm:text-4xl">
+      <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
         {title}
       </h2>
-      <p className="mt-2 text-[#6a594b]">{description}</p>
+      <p className="mt-2 text-slate-500">{description}</p>
     </div>
   );
 }
@@ -822,11 +823,11 @@ function TextInput({
 }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
+      <span className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
         {label}
       </span>
       <input
-        className="mt-2 w-full rounded-2xl border border-[#251a12]/15 bg-white px-5 py-4 text-lg outline-none transition placeholder:text-[#8f7d6d] focus:border-[#2f7d6d] focus:ring-4 focus:ring-[#2f7d6d]/15 disabled:cursor-not-allowed disabled:bg-[#efe4d0] disabled:text-[#6a594b]"
+        className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
@@ -849,11 +850,11 @@ function DateInput({
 }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
+      <span className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
         {label}
       </span>
       <input
-        className="mt-2 w-full rounded-2xl border border-[#251a12]/15 bg-white px-5 py-4 text-lg outline-none transition focus:border-[#2f7d6d] focus:ring-4 focus:ring-[#2f7d6d]/15"
+        className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
         type="date"
         value={value}
         onChange={(event) => onChange(event.target.value)}
@@ -879,11 +880,11 @@ function SelectInput({
 }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
+      <span className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
         {label}
       </span>
       <select
-        className="mt-2 w-full rounded-2xl border border-[#251a12]/15 bg-white px-5 py-4 text-lg outline-none transition focus:border-[#2f7d6d] focus:ring-4 focus:ring-[#2f7d6d]/15 disabled:cursor-not-allowed disabled:bg-[#efe4d0] disabled:text-[#6a594b]"
+        className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         disabled={disabled}
@@ -902,11 +903,11 @@ function SelectInput({
 function ReadonlyMoney({ label, value }: { label: string; value: number }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
+      <span className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
         {label}
       </span>
       <input
-        className="mt-2 w-full rounded-2xl border border-[#251a12]/15 bg-[#efe4d0] px-5 py-4 text-lg font-black text-[#251a12] outline-none"
+        className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-100 px-5 py-4 text-lg font-black text-slate-900 outline-none"
         value={formatRupiah(value)}
         readOnly
       />
@@ -923,12 +924,12 @@ function SubmitButton({
 }) {
   const className =
     tone === "income"
-      ? "bg-[#2f7d6d] hover:bg-[#256357] focus:ring-[#2f7d6d]/25"
-      : "bg-[#9d3f2f] hover:bg-[#7d3024] focus:ring-[#9d3f2f]/20";
+      ? "bg-emerald-600 hover:bg-emerald-700 focus:ring-emerald-600/25 shadow-lg shadow-emerald-600/20"
+      : "bg-rose-600 hover:bg-rose-700 focus:ring-rose-600/25 shadow-lg shadow-rose-600/20";
 
   return (
     <button
-      className={`rounded-2xl px-5 py-4 text-lg font-black text-white transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 ${className}`}
+      className={`rounded-2xl px-5 py-4 text-lg font-black text-white transition-all hover:-translate-y-0.5 focus:outline-none focus:ring-4 ${className}`}
     >
       {children}
     </button>
