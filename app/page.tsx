@@ -27,6 +27,12 @@ type Transaction = {
   balanceAfter: number;
 };
 
+type ProductMenu = {
+  name: string;
+  category: "Minuman" | "Cemilan";
+  price: number;
+};
+
 const emptyIncome: IncomeForm = {
   namaMenu: "",
   kategori: "",
@@ -41,6 +47,24 @@ const emptyExpense: ExpenseForm = {
   hargaSatuan: "",
   totalHarga: "",
 };
+
+const productMenus: ProductMenu[] = [
+  { name: "Espresso", category: "Minuman", price: 10000 },
+  { name: "Americano", category: "Minuman", price: 8000 },
+  { name: "Cappucino", category: "Minuman", price: 10000 },
+  { name: "Latte", category: "Minuman", price: 10000 },
+  { name: "Coco Coffee", category: "Minuman", price: 10000 },
+  { name: "Madura Coffe", category: "Minuman", price: 5000 },
+  { name: "Madura Milk Coffe", category: "Minuman", price: 6000 },
+  { name: "Air mineral", category: "Minuman", price: 3000 },
+  { name: "Creamy Milk Tea", category: "Minuman", price: 7000 },
+  { name: "Original Hot Tea", category: "Minuman", price: 5000 },
+  { name: "Kentang Goreng", category: "Cemilan", price: 10000 },
+  { name: "Soget (sosis nuget)", category: "Cemilan", price: 10000 },
+  { name: "Mix Plate", category: "Cemilan", price: 10000 },
+  { name: "Piscok", category: "Cemilan", price: 10000 },
+  { name: "Es Teh", category: "Cemilan", price: 10000 },
+];
 
 const formatRupiah = (value: number) =>
   new Intl.NumberFormat("id-ID", {
@@ -126,6 +150,24 @@ export default function Home() {
       ...current,
     ]);
     setExpense(emptyExpense);
+  }
+
+  function selectProductMenu(menuName: string) {
+    const selectedMenu = productMenus.find((menu) => menu.name === menuName);
+
+    if (!selectedMenu) {
+      setIncome(emptyIncome);
+      return;
+    }
+
+    const price = String(selectedMenu.price);
+    setIncome({
+      ...income,
+      namaMenu: selectedMenu.name,
+      kategori: selectedMenu.category,
+      hargaSatuan: price,
+      hargaTotal: price,
+    });
   }
 
   if (!isLoggedIn) {
@@ -270,25 +312,40 @@ export default function Home() {
                   title="Catat uang masuk BS"
                   description="Saldo akhir otomatis dihitung dari Saldo BS ditambah Harga total."
                 />
-                <TextInput
+                <SelectInput
                   label="Nama menu"
                   value={income.namaMenu}
-                  onChange={(value) => setIncome({ ...income, namaMenu: value })}
-                  placeholder="Es kopi gula aren"
+                  onChange={selectProductMenu}
+                  placeholder="Pilih menu"
+                  options={productMenus.map((menu) => ({
+                    label: menu.name,
+                    value: menu.name,
+                  }))}
                 />
                 <TextInput
                   label="Kategori"
                   value={income.kategori}
                   onChange={(value) => setIncome({ ...income, kategori: value })}
-                  placeholder="Minuman"
+                  placeholder="Kategori mengikuti menu"
+                  readOnly
                 />
                 <div className="grid gap-5 md:grid-cols-2">
-                  <TextInput
+                  <SelectInput
                     label="Harga satuan"
                     value={income.hargaSatuan}
                     onChange={(value) => setIncome({ ...income, hargaSatuan: value })}
-                    placeholder="12000"
-                    inputMode="numeric"
+                    placeholder="Pilih menu dulu"
+                    disabled={!income.namaMenu}
+                    options={
+                      income.hargaSatuan
+                        ? [
+                            {
+                              label: formatRupiah(parseMoney(income.hargaSatuan)),
+                              value: income.hargaSatuan,
+                            },
+                          ]
+                        : []
+                    }
                   />
                   <TextInput
                     label="Unit"
@@ -430,12 +487,14 @@ function TextInput({
   onChange,
   placeholder,
   inputMode,
+  readOnly = false,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
   inputMode?: "numeric";
+  readOnly?: boolean;
 }) {
   return (
     <label className="block">
@@ -448,7 +507,45 @@ function TextInput({
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         inputMode={inputMode}
+        readOnly={readOnly}
       />
+    </label>
+  );
+}
+
+function SelectInput({
+  label,
+  value,
+  onChange,
+  placeholder,
+  options,
+  disabled = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  options: Array<{ label: string; value: string }>;
+  disabled?: boolean;
+}) {
+  return (
+    <label className="block">
+      <span className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
+        {label}
+      </span>
+      <select
+        className="mt-2 w-full rounded-2xl border border-[#251a12]/15 bg-white px-5 py-4 text-lg outline-none transition focus:border-[#2f7d6d] focus:ring-4 focus:ring-[#2f7d6d]/15 disabled:cursor-not-allowed disabled:bg-[#efe4d0] disabled:text-[#6a594b]"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        disabled={disabled}
+      >
+        <option value="">{placeholder}</option>
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
     </label>
   );
 }
