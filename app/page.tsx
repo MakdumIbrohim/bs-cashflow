@@ -74,6 +74,7 @@ const formatRupiah = (value: number) =>
   }).format(value);
 
 const parseMoney = (value: string) => Number(value.replace(/[^0-9]/g, "")) || 0;
+const parseQuantity = (value: string) => Number(value.replace(/[^0-9]/g, "")) || 0;
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -85,8 +86,12 @@ export default function Home() {
   const [expense, setExpense] = useState<ExpenseForm>(emptyExpense);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-  const incomeTotal = parseMoney(income.hargaTotal);
-  const expenseTotal = parseMoney(expense.totalHarga);
+  const incomeUnit = parseQuantity(income.unit);
+  const expenseUnit = parseQuantity(expense.unit);
+  const incomePrice = parseMoney(income.hargaSatuan);
+  const expensePrice = parseMoney(expense.hargaSatuan);
+  const incomeTotal = incomeUnit * incomePrice;
+  const expenseTotal = expenseUnit * expensePrice;
 
   const incomeBalanceAfter = useMemo(
     () => balance + incomeTotal,
@@ -166,7 +171,8 @@ export default function Home() {
       namaMenu: selectedMenu.name,
       kategori: selectedMenu.category,
       hargaSatuan: price,
-      hargaTotal: price,
+      unit: income.unit || "1",
+      hargaTotal: String(selectedMenu.price * (parseQuantity(income.unit) || 1)),
     });
   }
 
@@ -351,15 +357,13 @@ export default function Home() {
                     label="Unit"
                     value={income.unit}
                     onChange={(value) => setIncome({ ...income, unit: value })}
-                    placeholder="1 gelas, 1 porsi"
+                    placeholder="Masukkan jumlah unit"
+                    inputMode="numeric"
                   />
                 </div>
-                <TextInput
+                <ReadonlyMoney
                   label="Harga total"
-                  value={income.hargaTotal}
-                  onChange={(value) => setIncome({ ...income, hargaTotal: value })}
-                  placeholder="12000"
-                  inputMode="numeric"
+                  value={incomeTotal}
                 />
                 <ReadonlyMoney
                   label="Total saldo akhir BS-Cashflow"
@@ -385,7 +389,8 @@ export default function Home() {
                     label="Unit"
                     value={expense.unit}
                     onChange={(value) => setExpense({ ...expense, unit: value })}
-                    placeholder="2 pack, 1 kardus"
+                    placeholder="Masukkan jumlah unit"
+                    inputMode="numeric"
                   />
                   <TextInput
                     label="Harga satuan"
@@ -395,12 +400,9 @@ export default function Home() {
                     inputMode="numeric"
                   />
                 </div>
-                <TextInput
+                <ReadonlyMoney
                   label="Total harga"
-                  value={expense.totalHarga}
-                  onChange={(value) => setExpense({ ...expense, totalHarga: value })}
-                  placeholder="100000"
-                  inputMode="numeric"
+                  value={expenseTotal}
                 />
                 <ReadonlyMoney label="Saldo akhir BS" value={expenseBalanceAfter} />
                 <SubmitButton tone="expense">Simpan Pengeluaran</SubmitButton>
