@@ -134,6 +134,17 @@ const formatDate = (value: string) => {
   }).format(new Date(value));
 };
 
+const formatMonth = (yearMonth: string) => {
+  if (!yearMonth) {
+    return "-";
+  }
+
+  return new Intl.DateTimeFormat("id-ID", {
+    month: "long",
+    year: "numeric",
+  }).format(new Date(`${yearMonth}-01`));
+};
+
 const parseMoney = (value: string) => Number(value.replace(/[^0-9]/g, "")) || 0;
 const parseQuantity = (value: string) => Number(value.replace(/[^0-9]/g, "")) || 0;
 
@@ -150,7 +161,9 @@ export default function Home() {
   const [expense, setExpense] = useState<ExpenseForm>(emptyExpense);
   const [transactions, setTransactions] =
     useState<Transaction[]>(initialTransactions);
-  const [historyDateFilter, setHistoryDateFilter] = useState("");
+  const [historyYearFilter, setHistoryYearFilter] = useState("");
+  const [historyMonthFilter, setHistoryMonthFilter] = useState("");
+  const [historyDayFilter, setHistoryDayFilter] = useState("");
 
   const incomeUnit = parseQuantity(income.unit);
   const expenseUnit = parseQuantity(expense.unit);
@@ -168,19 +181,79 @@ export default function Home() {
     () => balance - expenseTotal,
     [balance, expenseTotal],
   );
-  const uniqueTransactionDates = useMemo(
-    () => Array.from(new Set(transactions.map((transaction) => transaction.date))),
+  const uniqueTransactionYears = useMemo(
+    () =>
+      Array.from(
+        new Set(transactions.map((transaction) => transaction.date.slice(0, 4))),
+      ).sort((a, b) => Number(b) - Number(a)),
     [transactions],
   );
-  const filteredTransactions = useMemo(() => {
-    if (!historyDateFilter) {
-      return transactions;
+  const availableMonths = useMemo(() => {
+    if (!historyYearFilter) {
+      return [];
     }
 
-    return transactions.filter(
-      (transaction) => transaction.date === historyDateFilter,
-    );
-  }, [historyDateFilter, transactions]);
+    return Array.from(
+      new Set(
+        transactions
+          .filter((transaction) => transaction.date.startsWith(historyYearFilter))
+          .map((transaction) => transaction.date.slice(0, 7)),
+      ),
+    ).sort((a, b) => b.localeCompare(a));
+  }, [historyYearFilter, transactions]);
+  const availableDays = useMemo(() => {
+    if (!historyMonthFilter) {
+      return [];
+    }
+
+    return Array.from(
+      new Set(
+        transactions
+          .filter((transaction) => transaction.date.startsWith(historyMonthFilter))
+          .map((transaction) => transaction.date),
+      ),
+    ).sort((a, b) => b.localeCompare(a));
+  }, [historyMonthFilter, transactions]);
+  const filteredTransactions = useMemo(() => {
+    let currentTransactions = transactions;
+
+    if (historyYearFilter) {
+      currentTransactions = currentTransactions.filter((transaction) =>
+        transaction.date.startsWith(historyYearFilter),
+      );
+    }
+
+    if (historyMonthFilter) {
+      currentTransactions = currentTransactions.filter((transaction) =>
+        transaction.date.startsWith(historyMonthFilter),
+      );
+    }
+
+    if (historyDayFilter) {
+      currentTransactions = currentTransactions.filter(
+        (transaction) => transaction.date === historyDayFilter,
+      );
+    }
+
+    return currentTransactions;
+  }, [historyDayFilter, historyMonthFilter, historyYearFilter, transactions]);
+
+  function resetHistoryFilters() {
+    setHistoryYearFilter("");
+    setHistoryMonthFilter("");
+    setHistoryDayFilter("");
+  }
+
+  function selectHistoryYear(year: string) {
+    setHistoryYearFilter(year);
+    setHistoryMonthFilter("");
+    setHistoryDayFilter("");
+  }
+
+  function selectHistoryMonth(month: string) {
+    setHistoryMonthFilter(month);
+    setHistoryDayFilter("");
+  }
 
   function handleLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -545,47 +618,101 @@ export default function Home() {
               <FormTitle
                 eyebrow="Riwayat"
                 title="Riwayat Transaksi"
-                description="Lihat semua transaksi atau fokus ke transaksi pada tanggal tertentu."
+                description="Lihat semua transaksi, lalu persempit berdasarkan tahun, bulan, dan hari."
               />
-              <div className="mt-8 grid gap-5 lg:grid-cols-[1fr_260px]">
+              <div className="mt-8 grid gap-5 xl:grid-cols-[1.2fr_1fr_1fr_1fr]">
                 <div className="rounded-3xl border border-[#251a12]/10 bg-[#efe4d0] p-5">
                   <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
-                    Filter cepat
+                    Semua riwayat
+                  </p>
+                  <button
+                    type="button"
+                    className={`mt-4 w-full rounded-2xl px-4 py-3 text-sm font-black transition ${
+                      historyYearFilter === "" &&
+                      historyMonthFilter === "" &&
+                      historyDayFilter === ""
+                        ? "bg-[#243b35] text-white"
+                        : "bg-white text-[#251a12] hover:bg-[#f9f3e7]"
+                    }`}
+                    onClick={resetHistoryFilters}
+                  >
+                    Tampilkan semua transaksi
+                  </button>
+                </div>
+                <div className="rounded-3xl border border-[#251a12]/10 bg-[#efe4d0] p-5">
+                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
+                    Tahun
                   </p>
                   <div className="mt-4 flex flex-wrap gap-3">
-                    <button
-                      type="button"
-                      className={`rounded-2xl px-4 py-3 text-sm font-black transition ${
-                        historyDateFilter === ""
-                          ? "bg-[#243b35] text-white"
-                          : "bg-white text-[#251a12] hover:bg-[#f9f3e7]"
-                      }`}
-                      onClick={() => setHistoryDateFilter("")}
-                    >
-                      Semua riwayat
-                    </button>
-                    {uniqueTransactionDates.map((date) => (
+                    {uniqueTransactionYears.map((year) => (
                       <button
                         type="button"
                         className={`rounded-2xl px-4 py-3 text-sm font-black transition ${
-                          historyDateFilter === date
+                          historyYearFilter === year
                             ? "bg-[#2f7d6d] text-white"
                             : "bg-white text-[#251a12] hover:bg-[#f9f3e7]"
                         }`}
-                        key={date}
-                        onClick={() => setHistoryDateFilter(date)}
+                        key={year}
+                        onClick={() => selectHistoryYear(year)}
                       >
-                        {formatDate(date)}
+                        {year}
                       </button>
                     ))}
                   </div>
                 </div>
-                <div>
-                  <DateInput
-                    label="Filter per tanggal"
-                    value={historyDateFilter}
-                    onChange={setHistoryDateFilter}
-                  />
+                <div className="rounded-3xl border border-[#251a12]/10 bg-[#efe4d0] p-5">
+                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
+                    Bulan
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    {availableMonths.length === 0 ? (
+                      <p className="text-sm text-[#6a594b]">
+                        Pilih tahun terlebih dahulu.
+                      </p>
+                    ) : (
+                      availableMonths.map((month) => (
+                        <button
+                          type="button"
+                          className={`rounded-2xl px-4 py-3 text-sm font-black transition ${
+                            historyMonthFilter === month
+                              ? "bg-[#2f7d6d] text-white"
+                              : "bg-white text-[#251a12] hover:bg-[#f9f3e7]"
+                          }`}
+                          key={month}
+                          onClick={() => selectHistoryMonth(month)}
+                        >
+                          {formatMonth(month)}
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </div>
+                <div className="rounded-3xl border border-[#251a12]/10 bg-[#efe4d0] p-5">
+                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
+                    Hari
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    {availableDays.length === 0 ? (
+                      <p className="text-sm text-[#6a594b]">
+                        Pilih bulan terlebih dahulu.
+                      </p>
+                    ) : (
+                      availableDays.map((day) => (
+                        <button
+                          type="button"
+                          className={`rounded-2xl px-4 py-3 text-sm font-black transition ${
+                            historyDayFilter === day
+                              ? "bg-[#2f7d6d] text-white"
+                              : "bg-white text-[#251a12] hover:bg-[#f9f3e7]"
+                          }`}
+                          key={day}
+                          onClick={() => setHistoryDayFilter(day)}
+                        >
+                          {formatDate(day)}
+                        </button>
+                      ))
+                    )}
+                  </div>
                 </div>
               </div>
 
