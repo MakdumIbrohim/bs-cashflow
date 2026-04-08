@@ -2,11 +2,11 @@
 
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAppContext } from "../../context/AppContext";
-import { formatRupiah, formatDate, formatMonth } from "../../lib/utils";
-import { Header } from "../../components/Header";
-import { Sidebar } from "../../components/Sidebar";
-import { FormTitle } from "../../components/FormComponents";
+import { useAppContext } from "../context/AppContext";
+import { formatRupiah, formatDate, formatMonth } from "../lib/utils";
+import { Header } from "../components/Header";
+import { Sidebar } from "../components/Sidebar";
+import { FormTitle } from "../components/FormComponents";
 
 export default function HistoryPage() {
   const router = useRouter();
