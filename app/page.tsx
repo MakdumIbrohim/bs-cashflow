@@ -72,6 +72,49 @@ const productMenus: ProductMenu[] = [
   { name: "Es Teh", category: "Cemilan", price: 10000 },
 ];
 
+const initialTransactions: Transaction[] = [
+  {
+    id: 1,
+    type: "pemasukan",
+    date: "2026-04-08",
+    title: "Espresso",
+    amount: 20000,
+    balanceAfter: 20000,
+  },
+  {
+    id: 2,
+    type: "pengeluaran",
+    date: "2026-04-08",
+    title: "Belanja gula aren",
+    amount: 12000,
+    balanceAfter: 8000,
+  },
+  {
+    id: 3,
+    type: "pemasukan",
+    date: "2026-04-07",
+    title: "Kentang Goreng",
+    amount: 30000,
+    balanceAfter: 42000,
+  },
+  {
+    id: 4,
+    type: "pengeluaran",
+    date: "2026-04-07",
+    title: "Beli cup minuman",
+    amount: 10000,
+    balanceAfter: 12000,
+  },
+  {
+    id: 5,
+    type: "pemasukan",
+    date: "2026-04-06",
+    title: "Creamy Milk Tea",
+    amount: 21000,
+    balanceAfter: 22000,
+  },
+];
+
 const formatRupiah = (value: number) =>
   new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -100,10 +143,13 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [activeView, setActiveView] = useState<SidebarView>("dashboard");
   const [activeMenu, setActiveMenu] = useState<Menu>("pemasukan");
-  const [balance, setBalance] = useState(0);
+  const [balance, setBalance] = useState(
+    initialTransactions[0]?.balanceAfter ?? 0,
+  );
   const [income, setIncome] = useState<IncomeForm>(emptyIncome);
   const [expense, setExpense] = useState<ExpenseForm>(emptyExpense);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactions, setTransactions] =
+    useState<Transaction[]>(initialTransactions);
   const [historyDateFilter, setHistoryDateFilter] = useState("");
 
   const incomeUnit = parseQuantity(income.unit);
@@ -560,7 +606,17 @@ export default function Home() {
                       key={transaction.id}
                     >
                       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
+                        <div className="flex items-start gap-4">
+                          <div
+                            className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-xl font-black ${
+                              transaction.type === "pemasukan"
+                                ? "bg-[#d9efe9] text-[#2f7d6d]"
+                                : "bg-[#f4ddd8] text-[#9d3f2f]"
+                            }`}
+                          >
+                            {transaction.type === "pemasukan" ? "+" : "-"}
+                          </div>
+                          <div>
                           <p className="font-black">{transaction.title}</p>
                           <div className="mt-2 flex flex-wrap gap-2">
                             <span className="rounded-full bg-[#efe4d0] px-3 py-1 text-sm capitalize text-[#6a594b]">
@@ -570,6 +626,7 @@ export default function Home() {
                               {formatDate(transaction.date)}
                             </span>
                           </div>
+                        </div>
                         </div>
                         <p
                           className={`text-lg font-black ${
