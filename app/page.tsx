@@ -3,6 +3,7 @@
 import { FormEvent, useMemo, useState } from "react";
 
 type Menu = "pemasukan" | "pengeluaran";
+type SidebarView = "dashboard" | "riwayat";
 
 type IncomeForm = {
   tanggal: string;
@@ -78,6 +79,18 @@ const formatRupiah = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
+const formatDate = (value: string) => {
+  if (!value) {
+    return "-";
+  }
+
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(value));
+};
+
 const parseMoney = (value: string) => Number(value.replace(/[^0-9]/g, "")) || 0;
 const parseQuantity = (value: string) => Number(value.replace(/[^0-9]/g, "")) || 0;
 
@@ -85,11 +98,13 @@ export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [activeView, setActiveView] = useState<SidebarView>("dashboard");
   const [activeMenu, setActiveMenu] = useState<Menu>("pemasukan");
   const [balance, setBalance] = useState(0);
   const [income, setIncome] = useState<IncomeForm>(emptyIncome);
   const [expense, setExpense] = useState<ExpenseForm>(emptyExpense);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [historyDateFilter, setHistoryDateFilter] = useState("");
 
   const incomeUnit = parseQuantity(income.unit);
   const expenseUnit = parseQuantity(expense.unit);
@@ -107,6 +122,19 @@ export default function Home() {
     () => balance - expenseTotal,
     [balance, expenseTotal],
   );
+  const uniqueTransactionDates = useMemo(
+    () => Array.from(new Set(transactions.map((transaction) => transaction.date))),
+    [transactions],
+  );
+  const filteredTransactions = useMemo(() => {
+    if (!historyDateFilter) {
+      return transactions;
+    }
+
+    return transactions.filter(
+      (transaction) => transaction.date === historyDateFilter,
+    );
+  }, [historyDateFilter, transactions]);
 
   function handleLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -293,184 +321,276 @@ export default function Home() {
           </div>
         </header>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
-          <section className="rounded-[2rem] border border-[#251a12]/10 bg-[#fffaf0] p-5 shadow-xl shadow-[#251a12]/10 sm:p-8">
-            <div className="grid gap-3 rounded-3xl bg-[#efe4d0] p-2 sm:grid-cols-2">
+        <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
+          <aside className="rounded-[2rem] border border-[#251a12]/10 bg-[#fffaf0] p-5 shadow-xl shadow-[#251a12]/10 sm:p-6">
+            <p className="text-sm font-bold uppercase tracking-[0.3em] text-[#2f7d6d]">
+              Sidebar
+            </p>
+            <h2 className="mt-3 text-3xl font-black tracking-[-0.05em]">
+              Navigasi
+            </h2>
+            <div className="mt-6 grid gap-3">
               <button
-                className={`rounded-2xl px-5 py-4 text-left font-black transition ${
-                  activeMenu === "pemasukan"
-                    ? "bg-[#2f7d6d] text-white shadow-lg shadow-[#2f7d6d]/25"
-                    : "text-[#6a594b] hover:bg-white/70"
+                type="button"
+                className={`rounded-3xl px-5 py-4 text-left transition ${
+                  activeView === "dashboard"
+                    ? "bg-[#243b35] text-white shadow-lg shadow-[#243b35]/20"
+                    : "bg-[#efe4d0] text-[#251a12] hover:bg-[#e6d7bc]"
                 }`}
-                onClick={() => setActiveMenu("pemasukan")}
+                onClick={() => setActiveView("dashboard")}
               >
-                Pemasukan
+                <p className="font-black">Dashboard</p>
+                <p
+                  className={`mt-1 text-sm ${
+                    activeView === "dashboard" ? "text-white/70" : "text-[#6a594b]"
+                  }`}
+                >
+                  Saldo BS, pemasukan, dan pengeluaran.
+                </p>
               </button>
               <button
-                className={`rounded-2xl px-5 py-4 text-left font-black transition ${
-                  activeMenu === "pengeluaran"
-                    ? "bg-[#9d3f2f] text-white shadow-lg shadow-[#9d3f2f]/20"
-                    : "text-[#6a594b] hover:bg-white/70"
+                type="button"
+                className={`rounded-3xl px-5 py-4 text-left transition ${
+                  activeView === "riwayat"
+                    ? "bg-[#243b35] text-white shadow-lg shadow-[#243b35]/20"
+                    : "bg-[#efe4d0] text-[#251a12] hover:bg-[#e6d7bc]"
                 }`}
-                onClick={() => setActiveMenu("pengeluaran")}
+                onClick={() => setActiveView("riwayat")}
               >
-                Pengeluaran
+                <p className="font-black">Riwayat Transaksi</p>
+                <p
+                  className={`mt-1 text-sm ${
+                    activeView === "riwayat" ? "text-white/70" : "text-[#6a594b]"
+                  }`}
+                >
+                  Semua riwayat dan filter per tanggal.
+                </p>
               </button>
             </div>
+          </aside>
 
-            {activeMenu === "pemasukan" ? (
-              <form className="mt-8 grid gap-5" onSubmit={saveIncome}>
-                <FormTitle
-                  eyebrow="Form Pemasukan"
-                  title="Catat uang masuk BS"
-                  description="Saldo akhir otomatis dihitung dari Saldo BS ditambah Harga total."
-                />
-                <DateInput
-                  label="Tanggal"
-                  value={income.tanggal}
-                  onChange={(value) => setIncome({ ...income, tanggal: value })}
-                />
-                <SelectInput
-                  label="Nama menu"
-                  value={income.namaMenu}
-                  onChange={selectProductMenu}
-                  placeholder="Pilih menu"
-                  options={productMenus.map((menu) => ({
-                    label: menu.name,
-                    value: menu.name,
-                  }))}
-                />
-                <TextInput
-                  label="Kategori"
-                  value={income.kategori}
-                  onChange={(value) => setIncome({ ...income, kategori: value })}
-                  placeholder="Terisi otomatis setelah pilih nama menu"
-                  readOnly
-                  disabled
-                />
-                <div className="grid gap-5 md:grid-cols-2">
+          {activeView === "dashboard" ? (
+            <section className="rounded-[2rem] border border-[#251a12]/10 bg-[#fffaf0] p-5 shadow-xl shadow-[#251a12]/10 sm:p-8">
+              <div className="grid gap-3 rounded-3xl bg-[#efe4d0] p-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  className={`rounded-2xl px-5 py-4 text-left font-black transition ${
+                    activeMenu === "pemasukan"
+                      ? "bg-[#2f7d6d] text-white shadow-lg shadow-[#2f7d6d]/25"
+                      : "text-[#6a594b] hover:bg-white/70"
+                  }`}
+                  onClick={() => setActiveMenu("pemasukan")}
+                >
+                  Pemasukan
+                </button>
+                <button
+                  type="button"
+                  className={`rounded-2xl px-5 py-4 text-left font-black transition ${
+                    activeMenu === "pengeluaran"
+                      ? "bg-[#9d3f2f] text-white shadow-lg shadow-[#9d3f2f]/20"
+                      : "text-[#6a594b] hover:bg-white/70"
+                  }`}
+                  onClick={() => setActiveMenu("pengeluaran")}
+                >
+                  Pengeluaran
+                </button>
+              </div>
+
+              {activeMenu === "pemasukan" ? (
+                <form className="mt-8 grid gap-5" onSubmit={saveIncome}>
+                  <FormTitle
+                    eyebrow="Form Pemasukan"
+                    title="Catat uang masuk BS"
+                    description="Saldo akhir otomatis dihitung dari Saldo BS ditambah Harga total."
+                  />
+                  <DateInput
+                    label="Tanggal"
+                    value={income.tanggal}
+                    onChange={(value) => setIncome({ ...income, tanggal: value })}
+                  />
+                  <SelectInput
+                    label="Nama menu"
+                    value={income.namaMenu}
+                    onChange={selectProductMenu}
+                    placeholder="Pilih menu"
+                    options={productMenus.map((menu) => ({
+                      label: menu.name,
+                      value: menu.name,
+                    }))}
+                  />
                   <TextInput
-                    label="Harga satuan"
-                    value={
-                      income.hargaSatuan
-                        ? formatRupiah(parseMoney(income.hargaSatuan))
-                        : ""
-                    }
-                    onChange={() => undefined}
+                    label="Kategori"
+                    value={income.kategori}
+                    onChange={(value) => setIncome({ ...income, kategori: value })}
                     placeholder="Terisi otomatis setelah pilih nama menu"
                     readOnly
                     disabled
                   />
-                  <TextInput
-                    label="Unit"
-                    value={income.unit}
-                    onChange={(value) => setIncome({ ...income, unit: value })}
-                    placeholder="Masukkan jumlah unit"
-                    inputMode="numeric"
+                  <div className="grid gap-5 md:grid-cols-2">
+                    <TextInput
+                      label="Harga satuan"
+                      value={
+                        income.hargaSatuan
+                          ? formatRupiah(parseMoney(income.hargaSatuan))
+                          : ""
+                      }
+                      onChange={() => undefined}
+                      placeholder="Terisi otomatis setelah pilih nama menu"
+                      readOnly
+                      disabled
+                    />
+                    <TextInput
+                      label="Unit"
+                      value={income.unit}
+                      onChange={(value) => setIncome({ ...income, unit: value })}
+                      placeholder="Masukkan jumlah unit"
+                      inputMode="numeric"
+                    />
+                  </div>
+                  <ReadonlyMoney label="Harga total" value={incomeTotal} />
+                  <ReadonlyMoney
+                    label="Total saldo akhir BS-Cashflow"
+                    value={incomeBalanceAfter}
                   />
-                </div>
-                <ReadonlyMoney
-                  label="Harga total"
-                  value={incomeTotal}
-                />
-                <ReadonlyMoney
-                  label="Total saldo akhir BS-Cashflow"
-                  value={incomeBalanceAfter}
-                />
-                <SubmitButton tone="income">Simpan Pemasukan</SubmitButton>
-              </form>
-            ) : (
-              <form className="mt-8 grid gap-5" onSubmit={saveExpense}>
-                <FormTitle
-                  eyebrow="Form Pengeluaran"
-                  title="Catat uang keluar BS"
-                  description="Saldo akhir otomatis dihitung dari Saldo BS dikurangi Total harga."
-                />
-                <DateInput
-                  label="Tanggal"
-                  value={expense.tanggal}
-                  onChange={(value) => setExpense({ ...expense, tanggal: value })}
-                />
-                <TextInput
-                  label="Nama keterangan pengeluaran"
-                  value={expense.keterangan}
-                  onChange={(value) => setExpense({ ...expense, keterangan: value })}
-                  placeholder="Belanja bahan baku"
-                />
-                <div className="grid gap-5 md:grid-cols-2">
-                  <TextInput
-                    label="Unit"
-                    value={expense.unit}
-                    onChange={(value) => setExpense({ ...expense, unit: value })}
-                    placeholder="Masukkan jumlah unit"
-                    inputMode="numeric"
-                  />
-                  <TextInput
-                    label="Harga satuan"
-                    value={expense.hargaSatuan}
-                    onChange={(value) => setExpense({ ...expense, hargaSatuan: value })}
-                    placeholder="50000"
-                    inputMode="numeric"
-                  />
-                </div>
-                <ReadonlyMoney
-                  label="Total harga"
-                  value={expenseTotal}
-                />
-                <ReadonlyMoney label="Saldo akhir BS" value={expenseBalanceAfter} />
-                <SubmitButton tone="expense">Simpan Pengeluaran</SubmitButton>
-              </form>
-            )}
-          </section>
-
-          <aside className="rounded-[2rem] border border-[#251a12]/10 bg-[#fffaf0] p-5 shadow-xl shadow-[#251a12]/10 sm:p-6">
-            <p className="text-sm font-bold uppercase tracking-[0.3em] text-[#2f7d6d]">
-              Riwayat
-            </p>
-            <h2 className="mt-3 text-3xl font-black tracking-[-0.05em]">
-              Transaksi terbaru
-            </h2>
-            <div className="mt-6 space-y-3">
-              {transactions.length === 0 ? (
-                <p className="rounded-3xl bg-[#efe4d0] p-5 text-[#6a594b]">
-                  Belum ada transaksi. Simpan pemasukan atau pengeluaran pertama
-                  untuk mulai membentuk saldo BS.
-                </p>
+                  <SubmitButton tone="income">Simpan Pemasukan</SubmitButton>
+                </form>
               ) : (
-                transactions.map((transaction) => (
-                  <article
-                    className="rounded-3xl border border-[#251a12]/10 bg-white p-5"
-                    key={transaction.id}
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p className="font-black">{transaction.title}</p>
-                        <p className="mt-1 text-sm capitalize text-[#6a594b]">
-                          {transaction.type}
-                        </p>
-                        <p className="mt-1 text-sm text-[#6a594b]">
-                          Tanggal: {transaction.date}
+                <form className="mt-8 grid gap-5" onSubmit={saveExpense}>
+                  <FormTitle
+                    eyebrow="Form Pengeluaran"
+                    title="Catat uang keluar BS"
+                    description="Saldo akhir otomatis dihitung dari Saldo BS dikurangi Total harga."
+                  />
+                  <DateInput
+                    label="Tanggal"
+                    value={expense.tanggal}
+                    onChange={(value) => setExpense({ ...expense, tanggal: value })}
+                  />
+                  <TextInput
+                    label="Nama keterangan pengeluaran"
+                    value={expense.keterangan}
+                    onChange={(value) => setExpense({ ...expense, keterangan: value })}
+                    placeholder="Belanja bahan baku"
+                  />
+                  <div className="grid gap-5 md:grid-cols-2">
+                    <TextInput
+                      label="Unit"
+                      value={expense.unit}
+                      onChange={(value) => setExpense({ ...expense, unit: value })}
+                      placeholder="Masukkan jumlah unit"
+                      inputMode="numeric"
+                    />
+                    <TextInput
+                      label="Harga satuan"
+                      value={expense.hargaSatuan}
+                      onChange={(value) => setExpense({ ...expense, hargaSatuan: value })}
+                      placeholder="50000"
+                      inputMode="numeric"
+                    />
+                  </div>
+                  <ReadonlyMoney label="Total harga" value={expenseTotal} />
+                  <ReadonlyMoney label="Saldo akhir BS" value={expenseBalanceAfter} />
+                  <SubmitButton tone="expense">Simpan Pengeluaran</SubmitButton>
+                </form>
+              )}
+            </section>
+          ) : (
+            <section className="rounded-[2rem] border border-[#251a12]/10 bg-[#fffaf0] p-5 shadow-xl shadow-[#251a12]/10 sm:p-8">
+              <FormTitle
+                eyebrow="Riwayat"
+                title="Riwayat Transaksi"
+                description="Lihat semua transaksi atau fokus ke transaksi pada tanggal tertentu."
+              />
+              <div className="mt-8 grid gap-5 lg:grid-cols-[1fr_260px]">
+                <div className="rounded-3xl border border-[#251a12]/10 bg-[#efe4d0] p-5">
+                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#6a594b]">
+                    Filter cepat
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    <button
+                      type="button"
+                      className={`rounded-2xl px-4 py-3 text-sm font-black transition ${
+                        historyDateFilter === ""
+                          ? "bg-[#243b35] text-white"
+                          : "bg-white text-[#251a12] hover:bg-[#f9f3e7]"
+                      }`}
+                      onClick={() => setHistoryDateFilter("")}
+                    >
+                      Semua riwayat
+                    </button>
+                    {uniqueTransactionDates.map((date) => (
+                      <button
+                        type="button"
+                        className={`rounded-2xl px-4 py-3 text-sm font-black transition ${
+                          historyDateFilter === date
+                            ? "bg-[#2f7d6d] text-white"
+                            : "bg-white text-[#251a12] hover:bg-[#f9f3e7]"
+                        }`}
+                        key={date}
+                        onClick={() => setHistoryDateFilter(date)}
+                      >
+                        {formatDate(date)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <DateInput
+                    label="Filter per tanggal"
+                    value={historyDateFilter}
+                    onChange={setHistoryDateFilter}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-8 space-y-6">
+                {transactions.length === 0 ? (
+                  <p className="rounded-3xl bg-[#efe4d0] p-5 text-[#6a594b]">
+                    Belum ada transaksi. Simpan pemasukan atau pengeluaran pertama
+                    untuk mulai membentuk saldo BS.
+                  </p>
+                ) : filteredTransactions.length === 0 ? (
+                  <p className="rounded-3xl bg-[#efe4d0] p-5 text-[#6a594b]">
+                    Tidak ada transaksi pada tanggal yang dipilih.
+                  </p>
+                ) : (
+                  filteredTransactions.map((transaction) => (
+                    <article
+                      className="rounded-3xl border border-[#251a12]/10 bg-white p-5"
+                      key={transaction.id}
+                    >
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                          <p className="font-black">{transaction.title}</p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <span className="rounded-full bg-[#efe4d0] px-3 py-1 text-sm capitalize text-[#6a594b]">
+                              {transaction.type}
+                            </span>
+                            <span className="rounded-full bg-[#efe4d0] px-3 py-1 text-sm text-[#6a594b]">
+                              {formatDate(transaction.date)}
+                            </span>
+                          </div>
+                        </div>
+                        <p
+                          className={`text-lg font-black ${
+                            transaction.type === "pemasukan"
+                              ? "text-[#2f7d6d]"
+                              : "text-[#9d3f2f]"
+                          }`}
+                        >
+                          {transaction.type === "pemasukan" ? "+" : "-"}
+                          {formatRupiah(transaction.amount)}
                         </p>
                       </div>
-                      <p
-                        className={`font-black ${
-                          transaction.type === "pemasukan"
-                            ? "text-[#2f7d6d]"
-                            : "text-[#9d3f2f]"
-                        }`}
-                      >
-                        {transaction.type === "pemasukan" ? "+" : "-"}
-                        {formatRupiah(transaction.amount)}
+                      <p className="mt-4 text-sm text-[#6a594b]">
+                        Saldo akhir: {formatRupiah(transaction.balanceAfter)}
                       </p>
-                    </div>
-                    <p className="mt-4 text-sm text-[#6a594b]">
-                      Saldo akhir: {formatRupiah(transaction.balanceAfter)}
-                    </p>
-                  </article>
-                ))
-              )}
-            </div>
-          </aside>
+                    </article>
+                  ))
+                )}
+              </div>
+            </section>
+          )}
         </div>
       </section>
     </main>
