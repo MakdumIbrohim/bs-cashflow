@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { AppProvider } from "./context/AppContext";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -19,7 +20,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" className="h-full antialiased">
-      <body className={`min-h-full ${plusJakartaSans.className} bg-slate-50 text-slate-900`}>{children}</body>
+      <body className={`min-h-full ${plusJakartaSans.className} bg-slate-50 text-slate-900`}>
+        <AppProvider>
+          {children}
+        </AppProvider>
+      </body>
     </html>
   );
 }
