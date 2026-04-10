@@ -177,8 +177,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     >
       {children}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 fade-in duration-300">
-          <div className={`flex items-center gap-3 rounded-2xl px-6 py-4 shadow-2xl backdrop-blur-md border ${
+        <div className="fixed top-4 left-1/2 w-[92%] max-w-md -translate-x-1/2 sm:left-auto sm:right-6 sm:top-auto sm:bottom-6 sm:w-auto sm:translate-x-0 z-50 animate-in slide-in-from-top-5 sm:slide-in-from-bottom-5 fade-in duration-300">
+          <div className={`flex items-center gap-3 rounded-2xl px-5 py-4 sm:px-6 shadow-2xl backdrop-blur-md border ${
             toast.type === "success" ? "bg-emerald-50/90 border-emerald-200 text-emerald-800 shadow-emerald-900/10" :
             toast.type === "error" ? "bg-rose-50/90 border-rose-200 text-rose-800 shadow-rose-900/10" :
             "bg-slate-50/90 border-slate-200 text-slate-800 shadow-slate-900/10"
