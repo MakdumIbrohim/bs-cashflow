@@ -110,7 +110,7 @@ export default function LoginPage() {
                     className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
                     value={username}
                     onChange={(event) => setUsername(event.target.value)}
-                    placeholder="contoh: admin-bs"
+                    placeholder="Masukkan username"
                     autoComplete="username"
                   />
                 </label>
