@@ -21,7 +21,12 @@ function normalizeTransaction(item: unknown, fallbackIndex: number): Transaction
 
   const record = item as UnknownRecord;
   const amount = toNumber(
-    record.amount ?? record.nominal ?? record.hargaTotal ?? record.totalHarga,
+    record.amount ??
+      record.nominal ??
+      record.hargaTotal ??
+      record.totalHarga ??
+      record.harga_total ??
+      record["Harga Total"],
   );
   const balanceAfter = toNumber(
     record.balanceAfter ?? record.saldoAkhir ?? record.balance ?? record.saldo,
@@ -31,7 +36,9 @@ function normalizeTransaction(item: unknown, fallbackIndex: number): Transaction
       ? record.date
       : typeof record.tanggal === "string"
         ? record.tanggal
-        : "";
+        : typeof record.Tanggal === "string"
+          ? record.Tanggal
+          : "";
   const title =
     typeof record.title === "string"
       ? record.title
@@ -39,13 +46,17 @@ function normalizeTransaction(item: unknown, fallbackIndex: number): Transaction
         ? record.namaMenu
         : typeof record.keterangan === "string"
           ? record.keterangan
-          : "";
+          : typeof record.Keterangan === "string"
+            ? record.Keterangan
+            : typeof record["nama_menu / keterangan"] === "string"
+              ? record["nama_menu / keterangan"]
+              : "";
 
   if (!date || !title) return null;
 
   return {
-    id: toNumber(record.id) || Date.now() + fallbackIndex,
-    type: toMenu(record.type ?? record.jenis),
+    id: toNumber(record.id ?? record.ID) || Date.now() + fallbackIndex,
+    type: toMenu(record.type ?? record.jenis ?? record.tipe ?? record.Tipe),
     date,
     title,
     amount,
@@ -64,15 +75,38 @@ function normalizeTransactions(payload: unknown): Transaction[] {
 
   if (!Array.isArray(rawList)) return [];
 
-  return rawList
+  const validTransactions = rawList
     .map((item, index) => normalizeTransaction(item, index))
-    .filter((item): item is Transaction => item !== null)
-    .sort((a, b) => {
-      if (a.date === b.date) {
-        return b.id - a.id;
-      }
-      return b.date.localeCompare(a.date);
-    });
+    .filter((item): item is Transaction => item !== null);
+
+  // 1. Urutkan dari yang paling lama ke yang terbaru (Kronologis)
+  validTransactions.sort((a, b) => {
+    if (a.date === b.date) {
+      return a.id - b.id; // Asumsi ID lebih kecil = lebih lama dibuat
+    }
+    return a.date.localeCompare(b.date);
+  });
+
+  // 2. Hitung saldo berjalan (Running Balance)
+  let currentBalance = 0;
+  for (const t of validTransactions) {
+    if (t.type === "pemasukan") {
+      currentBalance += t.amount;
+    } else {
+      currentBalance -= t.amount;
+    }
+    t.balanceAfter = currentBalance;
+  }
+
+  // 3. Kembalikan ke urutan terbaru di atas (Reverse Chronological)
+  validTransactions.sort((a, b) => {
+    if (a.date === b.date) {
+      return b.id - a.id;
+    }
+    return b.date.localeCompare(a.date);
+  });
+
+  return validTransactions;
 }
 
 async function parseJsonResponse(response: Response) {

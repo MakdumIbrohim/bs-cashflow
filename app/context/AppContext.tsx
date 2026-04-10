@@ -90,6 +90,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const nextBalance =
       input.type === "pemasukan" ? balance + input.amount : balance - input.amount;
 
+    const returnedTx = payload.transaction;
+    if (returnedTx && !returnedTx.balanceAfter) {
+      // API secara default akan mereturn 0 karena POST API hanya tau 1 row tersebut.
+      // Jadi kita hitung manual untuk cache lokal.
+      returnedTx.balanceAfter = nextBalance;
+    }
+
     const fallbackTransaction: Transaction = {
       id: Date.now(),
       type: input.type,
@@ -100,7 +107,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
 
     setTransactionError("");
-    setTransactions((current) => [payload.transaction ?? fallbackTransaction, ...current]);
+    setTransactions((current) => [returnedTx ?? fallbackTransaction, ...current]);
   }
 
   const addIncome = async (income: IncomeForm, incomeTotal: number) => {
