@@ -313,7 +313,7 @@ export default function HistoryPage() {
                 }} 
                 className="w-full rounded-2xl bg-[#135156] py-3.5 font-bold text-white shadow-lg shadow-[rgba(19,81,86,0.3)] transition hover:-translate-y-0.5 hover:bg-[#0f4347]"
               >
-                Cetak / Simpan PDF
+                Simpan PDF
               </button>
             </div>
           </div>
