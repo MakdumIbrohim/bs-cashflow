@@ -136,7 +136,7 @@ export default function LoginPage() {
                 )}
 
                 <button 
-                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 px-5 py-4 text-lg font-black text-white shadow-lg shadow-slate-900/20 transition-all hover:-translate-y-1 hover:bg-[#135156] hover:shadow-[rgba(19,81,86,0.3)] focus:outline-none focus:ring-4 focus:ring-[rgba(19,81,86,0.25)] disabled:opacity-50 disabled:hover:translate-y-0"
+                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#135156] px-5 py-4 text-lg font-black text-white shadow-lg shadow-[rgba(19,81,86,0.25)] transition-all hover:-translate-y-1 hover:bg-[#0f4347] hover:shadow-[rgba(19,81,86,0.3)] focus:outline-none focus:ring-4 focus:ring-[rgba(19,81,86,0.25)] disabled:opacity-50 disabled:hover:translate-y-0"
                   disabled={isLoading}
                 >
                   {isLoading && (
