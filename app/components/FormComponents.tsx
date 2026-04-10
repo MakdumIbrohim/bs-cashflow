@@ -99,25 +99,78 @@ export function SelectInput({
   options: Array<{ label: string; value: string }>;
   disabled?: boolean;
 }) {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  // Close when clicking outside
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filteredOptions = options.filter(option => 
+    option.label.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const selectedOption = options.find(opt => opt.value === value);
+
   return (
-    <label className="block">
+    <div className="block relative" ref={dropdownRef}>
       <span className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
         {label}
       </span>
-      <select
-        className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        disabled={disabled}
+      <div 
+        className={`mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all cursor-pointer flex justify-between items-center ${disabled ? 'opacity-60 cursor-not-allowed bg-slate-50 text-slate-500' : 'focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/15'}`}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        tabIndex={disabled ? -1 : 0}
       >
-        <option value="">{placeholder}</option>
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-    </label>
+        <span className={selectedOption ? "text-slate-900" : "text-slate-400"}>
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
+        <svg className={`w-5 h-5 text-emerald-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+      </div>
+
+      {isOpen && !disabled && (
+        <div className="absolute z-10 w-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
+          <div className="p-3 border-b border-slate-100 bg-slate-50/50">
+            <input 
+              type="text"
+              className="w-full px-4 py-3 text-base rounded-xl bg-white border border-slate-200 outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15 transition-all"
+              placeholder="Ketik untuk mencari..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              autoFocus
+            />
+          </div>
+          <div className="max-h-60 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-slate-200">
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((option) => (
+                <div 
+                  key={option.value}
+                  className={`px-4 py-3 cursor-pointer rounded-xl transition-all font-medium ${value === option.value ? 'bg-emerald-50 text-emerald-700' : 'hover:bg-slate-50 text-slate-700'}`}
+                  onClick={() => {
+                    onChange(option.value);
+                    setIsOpen(false);
+                    setSearchQuery("");
+                  }}
+                >
+                  {option.label}
+                </div>
+              ))
+            ) : (
+              <div className="px-4 py-6 text-slate-400 text-center text-sm font-medium">Data tidak ditemukan</div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
