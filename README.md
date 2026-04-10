@@ -1,36 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BS Cashflow
 
-## Getting Started
+BS Cashflow adalah aplikasi pencatatan kas untuk mencatat pemasukan dan pengeluaran harian BS cafe. Aplikasi ini dipakai untuk:
 
-First, run the development server:
+- login pengguna internal
+- mencatat transaksi pemasukan
+- mencatat transaksi pengeluaran
+- menghitung saldo akhir otomatis
+- melihat riwayat transaksi
+- mengekspor riwayat transaksi ke PDF
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Data Disimpan Di Mana
+
+Project ini memakai beberapa tempat penyimpanan data:
+
+- `Supabase`
+  Dipakai untuk data login pengguna pada tabel `karyawan`. Endpoint login ada di `app/api/auth/login/route.ts`.
+
+- `Google Apps Script`
+  Dipakai untuk membaca dan menyimpan data transaksi kas. Endpoint transaksi ada di `app/api/transactions/route.ts`.
+
+- `localStorage` browser
+  Dipakai untuk menyimpan status login sementara di sisi client, yaitu:
+  `bs_isLoggedIn` dan `bs_user`.
+
+Jadi singkatnya:
+
+- data akun user: `Supabase`
+- data transaksi kas: `Google Apps Script`
+- sesi login di browser: `localStorage`
+
+## Fitur Utama
+
+- Login user internal
+- Form pemasukan
+- Form pengeluaran
+- Perhitungan saldo otomatis
+- Riwayat transaksi dengan filter tanggal
+- Ekspor transaksi ke PDF
+
+## Stack
+
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- Supabase
+- Google Apps Script
+
+## Struktur Singkat
+
+- `app/login/page.tsx`
+  Halaman login.
+
+- `app/dashboard/page.tsx`
+  Halaman input pemasukan dan pengeluaran.
+
+- `app/history/page.tsx`
+  Halaman riwayat transaksi dan ekspor PDF.
+
+- `app/api/auth/login/route.ts`
+  API login yang memeriksa user ke Supabase.
+
+- `app/api/transactions/route.ts`
+  API untuk mengambil dan menyimpan transaksi melalui Google Apps Script.
+
+- `app/context/AppContext.tsx`
+  Menyimpan state global aplikasi seperti user login, transaksi, saldo, dan toast.
+
+## Environment Variables
+
+Buat file `.env.local` lalu isi minimal seperti ini:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
+GOOGLE_APPS_SCRIPT_URL=your_google_apps_script_url
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Keterangan:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `NEXT_PUBLIC_SUPABASE_URL`
+  URL project Supabase.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+  key publishable/anon Supabase untuk akses client.
 
-## Learn More
+- `GOOGLE_APPS_SCRIPT_URL`
+  URL web app Google Apps Script untuk transaksi. Jika tidak diisi, aplikasi memakai URL default yang sudah ada di source code.
 
-To learn more about Next.js, take a look at the following resources:
+## Menjalankan Project
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Install dependency:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm install
+```
 
-## Deploy on Vercel
+Jalankan mode development:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+pnpm dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Buka:
+
+```text
+http://localhost:3000
+```
+
+## Alur Data
+
+1. User login dari halaman login.
+2. API login memeriksa `username` dan `password` ke tabel `karyawan` di Supabase.
+3. Jika berhasil, data user disimpan ke `localStorage`.
+4. Saat aplikasi dibuka, transaksi diambil dari Google Apps Script.
+5. Saat user menambah pemasukan atau pengeluaran, data dikirim ke Google Apps Script.
+6. Saldo dihitung ulang berdasarkan urutan transaksi.
+
+## Catatan
+
+- Password login dicek menggunakan `bcrypt`.
+- Saldo aplikasi dihitung dari data transaksi, bukan dari field saldo terpisah yang disimpan manual.
+- Riwayat transaksi ditampilkan dari data terbaru ke data terlama.
