@@ -253,7 +253,14 @@ export default function HistoryPage() {
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsExportModalOpen(false)}></div>
           <div className="relative w-full max-w-lg rounded-[2rem] bg-white p-6 shadow-2xl sm:p-8 animate-in zoom-in-95 duration-200">
             <h2 className="text-2xl font-black text-slate-900">Pengaturan Cetak PDF</h2>
-            <p className="mt-2 text-slate-500">Pilih rentang data transaksi yang ingin Anda cetak.</p>
+            
+            <div className="mt-4 flex items-start gap-3 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-blue-800">
+              <svg className="mt-0.5 h-6 w-6 shrink-0 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <div className="text-sm leading-relaxed">
+                <p className="font-bold">Informasi</p>
+                <p className="mt-1 opacity-90">Jika Anda hanya ingin mencetak data bulan atau tanggal khusus, <strong>tutup layar ini</strong> dan atur filter waktu di halaman utama dulu. Setelah itu tekan kembali Ekspor PDF dan pilih mode <strong>Sesuai Tampilan</strong>.</p>
+              </div>
+            </div>
             
             <div className="mt-6 flex flex-col gap-3">
               <label className={`flex cursor-pointer border-2 items-center gap-4 rounded-xl p-4 transition-all ${exportMode === 'filtered' ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 bg-slate-50'}`}>
