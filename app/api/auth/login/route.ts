@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     
     if (!isPasswordMatch) {
       return NextResponse.json(
-        { error: "Kombinasi sandi salah." },
+        { error: "Sandi salah!" },
         { status: 401 }
       );
     }
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Login API Error:", error);
     return NextResponse.json(
-      { error: "Terjadi kesalahan internal peladen." },
+      { error: "Terjadi kesalahan internal" },
       { status: 500 }
     );
   }
