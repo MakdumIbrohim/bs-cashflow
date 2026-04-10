@@ -139,7 +139,7 @@ export default function DashboardPage() {
                 type="button"
                 className={`rounded-2xl px-5 py-4 text-left font-black transition-all ${
                   activeMenu === "pemasukan"
-                    ? "bg-[#135156] text-white shadow-md shadow-[rgba(19,81,86,0.25)]"
+                    ? "bg-[#135156] text-white shadow-md shadow-emerald-600/25"
                     : "text-slate-600 hover:bg-white"
                 }`}
                 onClick={() => setActiveMenu("pemasukan")}
@@ -287,11 +287,11 @@ export default function DashboardPage() {
             <div className="mt-6 rounded-2xl bg-slate-50 border border-slate-100 p-5 space-y-4 text-sm sm:text-base">
               {confirmModal.type === "income" ? (
                 <>
-                  <div className="flex justify-between border-b border-slate-200 pb-3"><span className="text-slate-500">Kategori</span><span className="font-bold text-[#135156]">Pemasukan</span></div>
+                  <div className="flex justify-between border-b border-slate-200 pb-3"><span className="text-slate-500">Kategori</span><span className="font-bold text-emerald-600">Pemasukan</span></div>
                   <div className="flex justify-between border-b border-slate-200 pb-3"><span className="text-slate-500">Tanggal</span><span className="font-bold text-slate-900">{income.tanggal}</span></div>
                   <div className="flex justify-between border-b border-slate-200 pb-3"><span className="text-slate-500">Nama Menu</span><span className="font-bold text-slate-900">{income.namaMenu}</span></div>
                   <div className="flex justify-between border-b border-slate-200 pb-3"><span className="text-slate-500">Volume</span><span className="font-bold text-slate-900">{income.unit} Pcs @ {formatRupiah(incomePrice)}</span></div>
-                  <div className="flex justify-between pt-1"><span className="text-slate-500 font-bold">Total Pemasukan</span><span className="text-lg font-black text-[#135156]">+{formatRupiah(incomeTotal)}</span></div>
+                  <div className="flex justify-between pt-1"><span className="text-slate-500 font-bold">Total Pemasukan</span><span className="text-lg font-black text-emerald-600">+{formatRupiah(incomeTotal)}</span></div>
                 </>
               ) : (
                 <>

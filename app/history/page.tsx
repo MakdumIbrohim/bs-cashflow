@@ -229,7 +229,7 @@ export default function HistoryPage() {
                         <div
                           className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-xl font-black ${
                             transaction.type === "pemasukan"
-                              ? "bg-[rgba(19,81,86,0.1)] text-[#135156]"
+                              ? "bg-emerald-100 text-emerald-600"
                               : "bg-rose-100 text-rose-600"
                           }`}
                         >
@@ -250,7 +250,7 @@ export default function HistoryPage() {
                       <p
                         className={`text-lg font-black ${
                           transaction.type === "pemasukan"
-                            ? "text-[#135156]"
+                            ? "text-emerald-600"
                             : "text-rose-600"
                         }`}
                       >
@@ -343,7 +343,7 @@ export default function HistoryPage() {
                 <td className="border border-black p-3 whitespace-nowrap text-black">{formatDate(tx.date)}</td>
                 <td className="border border-black p-3 text-black font-medium">{tx.title}</td>
                 <td className="border border-black p-3 text-black capitalize">{tx.type}</td>
-                <td className="border border-black p-3 text-right whitespace-nowrap font-bold" style={{ color: tx.type === 'pemasukan' ? '#135156' : '#be123c' }}>
+                <td className="border border-black p-3 text-right whitespace-nowrap font-bold" style={{ color: tx.type === 'pemasukan' ? '#059669' : '#be123c' }}>
                   {tx.type === 'pemasukan' ? '+ ' : '- '} {formatRupiah(tx.amount)}
                 </td>
                 <td className="border border-black p-3 text-right font-bold text-black whitespace-nowrap">{formatRupiah(tx.balanceAfter)}</td>

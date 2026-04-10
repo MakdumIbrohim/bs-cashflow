@@ -200,7 +200,7 @@ export function SubmitButton({
 }) {
   const className =
     tone === "income"
-      ? "bg-[#135156] hover:bg-[#0f4347] focus:ring-[rgba(19,81,86,0.25)] shadow-lg shadow-[rgba(19,81,86,0.2)]"
+      ? "bg-[#135156] hover:bg-emerald-700 focus:ring-emerald-600/25 shadow-lg shadow-emerald-600/20"
       : "bg-rose-600 hover:bg-rose-700 focus:ring-rose-600/25 shadow-lg shadow-rose-600/20";
 
   return (
