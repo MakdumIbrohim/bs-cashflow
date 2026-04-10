@@ -40,6 +40,10 @@ export default function DashboardPage() {
   const [expense, setExpense] = useState<ExpenseForm>(emptyExpense);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    type: "income" | "expense" | null;
+  }>({ isOpen: false, type: null });
 
   const incomeUnit = parseQuantity(income.unit);
   const expenseUnit = parseQuantity(expense.unit);
@@ -70,43 +74,46 @@ export default function DashboardPage() {
     });
   }
 
-  async function saveIncome(event: FormEvent<HTMLFormElement>) {
+  function requestSaveIncome(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     if (!income.namaMenu.trim() || incomeTotal <= 0) return;
-
-    try {
-      setIsSubmitting(true);
-      setSubmitError("");
-      await addIncome(income, incomeTotal);
-      setIncome(emptyIncome);
-      showToast(`Pemasukan ${income.namaMenu} berhasil dicatat!`, "success");
-    } catch (error) {
-      setSubmitError(
-        error instanceof Error ? error.message : "Gagal menyimpan pemasukan.",
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
+    setConfirmModal({ isOpen: true, type: "income" });
   }
 
-  async function saveExpense(event: FormEvent<HTMLFormElement>) {
+  function requestSaveExpense(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     if (!expense.keterangan.trim() || expenseTotal <= 0) return;
+    setConfirmModal({ isOpen: true, type: "expense" });
+  }
 
-    try {
-      setIsSubmitting(true);
-      setSubmitError("");
-      await addExpense(expense, expenseTotal);
-      setExpense(emptyExpense);
-      showToast(`Pengeluaran ${expense.keterangan} berhasil dicatat!`, "success");
-    } catch (error) {
-      setSubmitError(
-        error instanceof Error ? error.message : "Gagal menyimpan pengeluaran.",
-      );
-    } finally {
-      setIsSubmitting(false);
+  async function confirmSave() {
+    setIsSubmitting(true);
+    setSubmitError("");
+    
+    if (confirmModal.type === "income") {
+      try {
+        await addIncome(income, incomeTotal);
+        setIncome(emptyIncome);
+        showToast(`Pemasukan ${income.namaMenu} berhasil dicatat!`, "success");
+        setConfirmModal({ isOpen: false, type: null });
+      } catch (error) {
+        setSubmitError(error instanceof Error ? error.message : "Gagal menyimpan pemasukan.");
+        setConfirmModal({ isOpen: false, type: null });
+      } finally {
+        setIsSubmitting(false);
+      }
+    } else if (confirmModal.type === "expense") {
+      try {
+        await addExpense(expense, expenseTotal);
+        setExpense(emptyExpense);
+        showToast(`Pengeluaran ${expense.keterangan} berhasil dicatat!`, "success");
+        setConfirmModal({ isOpen: false, type: null });
+      } catch (error) {
+        setSubmitError(error instanceof Error ? error.message : "Gagal menyimpan pengeluaran.");
+        setConfirmModal({ isOpen: false, type: null });
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   }
 
@@ -153,7 +160,7 @@ export default function DashboardPage() {
             </div>
 
             {activeMenu === "pemasukan" ? (
-              <form className="mt-8 grid gap-5" onSubmit={saveIncome}>
+              <form className="mt-8 grid gap-5" onSubmit={requestSaveIncome}>
                 <FormTitle
                   eyebrow="Form Pemasukan"
                   title="Catat uang masuk BS"
@@ -218,7 +225,7 @@ export default function DashboardPage() {
                 </SubmitButton>
               </form>
             ) : (
-              <form className="mt-8 grid gap-5" onSubmit={saveExpense}>
+              <form className="mt-8 grid gap-5" onSubmit={requestSaveExpense}>
                 <FormTitle
                   eyebrow="Form Pengeluaran"
                   title="Catat uang keluar BS"
@@ -266,6 +273,61 @@ export default function DashboardPage() {
           </section>
         </div>
       </section>
+
+      {/* Modal Konfirmasi */}
+      {confirmModal.isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => !isSubmitting && setConfirmModal({ isOpen: false, type: null })}></div>
+          <div className="relative w-full max-w-md rounded-[2rem] bg-white p-6 shadow-2xl sm:p-8 animate-in zoom-in-95 duration-200">
+            <h2 className="text-2xl font-black text-slate-900">
+              Konfirmasi {confirmModal.type === "income" ? "Pemasukan" : "Pengeluaran"}
+            </h2>
+            <p className="mt-2 text-slate-500 text-sm">Harap periksa kembali detail transaksi di bawah ini sebelum menyimpan.</p>
+            
+            <div className="mt-6 rounded-2xl bg-slate-50 border border-slate-100 p-5 space-y-4 text-sm sm:text-base">
+              {confirmModal.type === "income" ? (
+                <>
+                  <div className="flex justify-between border-b border-slate-200 pb-3"><span className="text-slate-500">Kategori</span><span className="font-bold text-emerald-600">Pemasukan</span></div>
+                  <div className="flex justify-between border-b border-slate-200 pb-3"><span className="text-slate-500">Tanggal</span><span className="font-bold text-slate-900">{income.tanggal}</span></div>
+                  <div className="flex justify-between border-b border-slate-200 pb-3"><span className="text-slate-500">Nama Menu</span><span className="font-bold text-slate-900">{income.namaMenu}</span></div>
+                  <div className="flex justify-between border-b border-slate-200 pb-3"><span className="text-slate-500">Volume</span><span className="font-bold text-slate-900">{income.unit} Pcs @ {formatRupiah(incomePrice)}</span></div>
+                  <div className="flex justify-between pt-1"><span className="text-slate-500 font-bold">Total Pemasukan</span><span className="font-black text-emerald-600 text-lg">+{formatRupiah(incomeTotal)}</span></div>
+                </>
+              ) : (
+                <>
+                  <div className="flex justify-between border-b border-slate-200 pb-3"><span className="text-slate-500">Kategori</span><span className="font-bold text-rose-600">Pengeluaran</span></div>
+                  <div className="flex justify-between border-b border-slate-200 pb-3"><span className="text-slate-500">Tanggal</span><span className="font-bold text-slate-900">{expense.tanggal}</span></div>
+                  <div className="flex justify-between border-b border-slate-200 pb-3"><span className="text-slate-500">Keterangan</span><span className="font-bold text-slate-900">{expense.keterangan}</span></div>
+                  <div className="flex justify-between border-b border-slate-200 pb-3"><span className="text-slate-500">Volume</span><span className="font-bold text-slate-900">{expense.unit} Pcs @ {formatRupiah(expensePrice)}</span></div>
+                  <div className="flex justify-between pt-1"><span className="text-slate-500 font-bold">Total Pengeluaran</span><span className="font-black text-rose-600 text-lg">-{formatRupiah(expenseTotal)}</span></div>
+                </>
+              )}
+            </div>
+
+            <div className="mt-8 flex gap-3">
+              <button 
+                type="button" 
+                disabled={isSubmitting}
+                onClick={() => setConfirmModal({ isOpen: false, type: null })} 
+                className="w-full rounded-2xl bg-slate-100 py-3.5 font-bold text-slate-700 hover:bg-slate-200 disabled:opacity-50"
+              >
+                Batal Edit
+              </button>
+              <button 
+                type="button"
+                disabled={isSubmitting}
+                onClick={confirmSave} 
+                className="w-full flex justify-center items-center gap-2 rounded-2xl bg-slate-900 py-3.5 font-bold text-white hover:bg-black transition disabled:opacity-50"
+              >
+                {isSubmitting && (
+                  <svg className="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                )}
+                {isSubmitting ? "Menyimpan..." : `Ya, Data Benar`}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
