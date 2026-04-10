@@ -6,7 +6,7 @@ import { useAppContext } from "../context/AppContext";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { isLoggedIn, setIsLoggedIn } = useAppContext();
+  const { isLoggedIn, setIsLoggedIn, setUser } = useAppContext();
   
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -17,15 +17,45 @@ export default function LoginPage() {
     }
   }, [isLoggedIn, router]);
 
-  function handleLogin(event: FormEvent<HTMLFormElement>) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  async function handleLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setErrorMsg("");
 
     if (!username.trim() || !password.trim()) {
+      setErrorMsg("Username dan password harus diisi.");
       return;
     }
 
-    setIsLoggedIn(true);
-    router.push("/dashboard");
+    try {
+      setIsLoading(true);
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Login gagal.");
+      }
+
+      // If login successful, store globally using AppContext handler 
+      // which auto-saves to localStorage
+      setUser(data.user);
+      setIsLoggedIn(true);
+      router.push("/dashboard");
+
+    } catch (error: any) {
+      setErrorMsg(error.message || "Terjadi kesalahan sistem.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   if (isLoggedIn) return null; // Or a loader while redirecting
@@ -99,8 +129,17 @@ export default function LoginPage() {
                   />
                 </label>
 
-                <button className="mt-2 w-full rounded-2xl bg-slate-900 px-5 py-4 text-lg font-black text-white shadow-lg shadow-slate-900/20 transition-all hover:-translate-y-1 hover:bg-emerald-600 hover:shadow-emerald-600/30 focus:outline-none focus:ring-4 focus:ring-emerald-600/25">
-                  Masuk ke Dashboard
+                {errorMsg && (
+                  <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-medium text-rose-600">
+                    {errorMsg}
+                  </div>
+                )}
+
+                <button 
+                  className="mt-2 w-full rounded-2xl bg-slate-900 px-5 py-4 text-lg font-black text-white shadow-lg shadow-slate-900/20 transition-all hover:-translate-y-1 hover:bg-emerald-600 hover:shadow-emerald-600/30 focus:outline-none focus:ring-4 focus:ring-emerald-600/25 disabled:opacity-50 disabled:hover:translate-y-0"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Memverifikasi..." : "Masuk ke Dashboard"}
                 </button>
               </form>
             </div>

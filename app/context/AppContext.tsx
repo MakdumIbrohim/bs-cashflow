@@ -8,9 +8,18 @@ import {
   CreateTransactionInput,
 } from "../lib/types";
 
+export interface User {
+  id: string | number;
+  username: string;
+  nama_lengkap: string;
+  role: string;
+}
+
 interface AppContextType {
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
+  user: User | null;
+  setUser: (user: User | null) => void;
   transactions: Transaction[];
   addIncome: (income: IncomeForm, incomeTotal: number) => Promise<void>;
   addExpense: (expense: ExpenseForm, expenseTotal: number) => Promise<void>;
@@ -24,6 +33,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [isMounted, setIsMounted] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isTransactionsLoading, setIsTransactionsLoading] = useState(true);
   const [transactionError, setTransactionError] = useState("");
@@ -32,6 +42,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setIsMounted(true);
     const savedLogin = localStorage.getItem("bs_isLoggedIn");
     if (savedLogin) setIsLoggedIn(JSON.parse(savedLogin));
+
+    const savedUser = localStorage.getItem("bs_user");
+    if (savedUser) setUser(JSON.parse(savedUser));
   }, []);
 
   useEffect(() => {
@@ -68,8 +81,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isMounted) {
       localStorage.setItem("bs_isLoggedIn", JSON.stringify(isLoggedIn));
+      localStorage.setItem("bs_user", JSON.stringify(user));
     }
-  }, [isLoggedIn, isMounted]);
+  }, [isLoggedIn, user, isMounted]);
 
   const balance = transactions.length > 0 ? transactions[0].balanceAfter : 0;
 
@@ -141,6 +155,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       value={{
         isLoggedIn,
         setIsLoggedIn,
+        user,
+        setUser,
         transactions,
         addIncome,
         addExpense,
