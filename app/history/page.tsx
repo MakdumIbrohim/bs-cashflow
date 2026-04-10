@@ -69,24 +69,33 @@ export default function HistoryPage() {
   }, [historyMonthFilter, currentYear, currentMonth, currentDay]);
 
   const filteredTransactions = useMemo(() => {
-    let currentTransactions = transactions;
+    if (!historyYearFilter && !historyMonthFilter && !historyDayFilter) {
+      return transactions;
+    }
 
-    if (historyYearFilter) {
-      currentTransactions = currentTransactions.filter((transaction) =>
-        transaction.date.startsWith(historyYearFilter)
-      );
-    }
-    if (historyMonthFilter) {
-      currentTransactions = currentTransactions.filter((transaction) =>
-        transaction.date.startsWith(historyMonthFilter)
-      );
-    }
-    if (historyDayFilter) {
-      currentTransactions = currentTransactions.filter(
-        (transaction) => transaction.date === historyDayFilter
-      );
-    }
-    return currentTransactions;
+    return transactions.filter((transaction) => {
+      // Ubah string UTC Google Apps Script ke tanggal lokal untuk mencocokkan filter browser
+      const d = new Date(transaction.date);
+      let localString = transaction.date;
+      
+      if (!isNaN(d.getTime())) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        localString = `${y}-${m}-${day}`;
+      }
+
+      if (historyDayFilter) {
+        return localString === historyDayFilter;
+      }
+      if (historyMonthFilter) {
+        return localString.startsWith(historyMonthFilter);
+      }
+      if (historyYearFilter) {
+        return localString.startsWith(historyYearFilter);
+      }
+      return true;
+    });
   }, [historyDayFilter, historyMonthFilter, historyYearFilter, transactions]);
 
   function resetHistoryFilters() {
