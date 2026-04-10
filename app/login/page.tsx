@@ -7,7 +7,7 @@ import { useAppContext } from "../context/AppContext";
 export default function LoginPage() {
   const router = useRouter();
   const { isLoggedIn, setIsLoggedIn, setUser } = useAppContext();
-  
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -66,7 +66,7 @@ export default function LoginPage() {
         {/* Abstract background elements */}
         <div className="absolute -left-24 top-10 h-96 w-96 rounded-full bg-emerald-400/20 blur-3xl" />
         <div className="absolute -right-20 bottom-4 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl" />
-        
+
         <div className="relative w-full max-w-5xl overflow-hidden rounded-[2rem] border border-white/50 bg-white/70 shadow-2xl shadow-slate-200/50 backdrop-blur-xl">
           <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
             <div className="flex min-h-[520px] flex-col justify-between bg-emerald-950 p-8 text-white sm:p-12">
@@ -135,7 +135,7 @@ export default function LoginPage() {
                   </div>
                 )}
 
-                <button 
+                <button
                   className="mt-2 w-full rounded-2xl bg-slate-900 px-5 py-4 text-lg font-black text-white shadow-lg shadow-slate-900/20 transition-all hover:-translate-y-1 hover:bg-emerald-600 hover:shadow-emerald-600/30 focus:outline-none focus:ring-4 focus:ring-emerald-600/25 disabled:opacity-50 disabled:hover:translate-y-0"
                   disabled={isLoading}
                 >
