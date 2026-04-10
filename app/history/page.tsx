@@ -321,7 +321,7 @@ export default function HistoryPage() {
       )}
 
       {/* Tampilan Cetak Khusus (Hanya muncul di dalam dokumen PDF / Printer) */}
-      <div className="hidden print:block fixed inset-0 z-[9999] bg-white p-8 font-sans">
+      <div className="hidden print:block absolute top-0 left-0 w-full min-h-screen z-[9999] bg-white p-8 font-sans">
         <div className="border-b-[3px] border-black pb-4 mb-6">
           <h1 className="text-2xl font-black uppercase text-black">Laporan Transaksi Kas BS Cashflow</h1>
           <p className="text-black text-sm mt-1">Dicetak pada: {formatDate(new Date().toISOString())} — Filter: {exportMode === 'all' ? 'Semua Waktu' : 'Disaring'}</p>
