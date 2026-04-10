@@ -25,6 +25,7 @@ export default function DashboardPage() {
     addExpense,
     isTransactionsLoading,
     transactionError,
+    showToast,
   } = useAppContext();
 
   // Redirect if not logged in
@@ -79,6 +80,7 @@ export default function DashboardPage() {
       setSubmitError("");
       await addIncome(income, incomeTotal);
       setIncome(emptyIncome);
+      showToast(`Pemasukan ${income.namaMenu} berhasil dicatat!`, "success");
     } catch (error) {
       setSubmitError(
         error instanceof Error ? error.message : "Gagal menyimpan pemasukan.",
@@ -98,6 +100,7 @@ export default function DashboardPage() {
       setSubmitError("");
       await addExpense(expense, expenseTotal);
       setExpense(emptyExpense);
+      showToast(`Pengeluaran ${expense.keterangan} berhasil dicatat!`, "success");
     } catch (error) {
       setSubmitError(
         error instanceof Error ? error.message : "Gagal menyimpan pengeluaran.",

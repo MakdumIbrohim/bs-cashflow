@@ -6,8 +6,8 @@ import { useAppContext } from "../context/AppContext";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { isLoggedIn, setIsLoggedIn, setUser } = useAppContext();
-
+  const { isLoggedIn, setIsLoggedIn, setUser, showToast } = useAppContext();
+  
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -45,10 +45,10 @@ export default function LoginPage() {
         throw new Error(data.error || "Login gagal.");
       }
 
-      // If login successful, store globally using AppContext handler 
       // which auto-saves to localStorage
       setUser(data.user);
       setIsLoggedIn(true);
+      showToast("Berhasil masuk ke Dashboard!", "success");
       router.push("/dashboard");
 
     } catch (error: any) {

@@ -3,13 +3,13 @@
 import React from "react";
 import { formatRupiah } from "../lib/utils";
 import { useAppContext } from "../context/AppContext";
-
 export function Header() {
-  const { balance, user, setIsLoggedIn, setUser } = useAppContext();
+  const { balance, user, setIsLoggedIn, setUser, showToast } = useAppContext();
 
   function logout() {
     setIsLoggedIn(false);
     setUser(null);
+    showToast("Berhasil logout", "info");
   }
 
   return (
