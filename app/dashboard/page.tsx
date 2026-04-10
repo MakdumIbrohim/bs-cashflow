@@ -18,7 +18,14 @@ import {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { isLoggedIn, balance, addIncome, addExpense } = useAppContext();
+  const {
+    isLoggedIn,
+    balance,
+    addIncome,
+    addExpense,
+    isTransactionsLoading,
+    transactionError,
+  } = useAppContext();
 
   // Redirect if not logged in
   React.useEffect(() => {
@@ -30,6 +37,8 @@ export default function DashboardPage() {
   const [activeMenu, setActiveMenu] = useState<Menu>("pemasukan");
   const [income, setIncome] = useState<IncomeForm>(emptyIncome);
   const [expense, setExpense] = useState<ExpenseForm>(emptyExpense);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const incomeUnit = parseQuantity(income.unit);
   const expenseUnit = parseQuantity(expense.unit);
@@ -60,22 +69,42 @@ export default function DashboardPage() {
     });
   }
 
-  function saveIncome(event: FormEvent<HTMLFormElement>) {
+  async function saveIncome(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!income.namaMenu.trim() || incomeTotal <= 0) return;
 
-    addIncome(income, incomeTotal);
-    setIncome(emptyIncome);
+    try {
+      setIsSubmitting(true);
+      setSubmitError("");
+      await addIncome(income, incomeTotal);
+      setIncome(emptyIncome);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "Gagal menyimpan pemasukan.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
-  function saveExpense(event: FormEvent<HTMLFormElement>) {
+  async function saveExpense(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!expense.keterangan.trim() || expenseTotal <= 0) return;
 
-    addExpense(expense, expenseTotal);
-    setExpense(emptyExpense);
+    try {
+      setIsSubmitting(true);
+      setSubmitError("");
+      await addExpense(expense, expenseTotal);
+      setExpense(emptyExpense);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "Gagal menyimpan pengeluaran.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   if (!isLoggedIn) return null; // Or loading spinner
@@ -89,6 +118,12 @@ export default function DashboardPage() {
           <Sidebar />
 
           <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/50 sm:p-8">
+            {transactionError ? (
+              <p className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                {transactionError}
+              </p>
+            ) : null}
+
             <div className="grid gap-3 rounded-3xl bg-slate-100 p-2 sm:grid-cols-2">
               <button
                 type="button"
@@ -170,7 +205,14 @@ export default function DashboardPage() {
                   label="Total saldo akhir BS-Cashflow"
                   value={incomeBalanceAfter}
                 />
-                <SubmitButton tone="income">Simpan Pemasukan</SubmitButton>
+                {submitError ? (
+                  <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                    {submitError}
+                  </p>
+                ) : null}
+                <SubmitButton tone="income" disabled={isSubmitting || isTransactionsLoading}>
+                  {isSubmitting ? "Menyimpan..." : "Simpan Pemasukan"}
+                </SubmitButton>
               </form>
             ) : (
               <form className="mt-8 grid gap-5" onSubmit={saveExpense}>
@@ -208,7 +250,14 @@ export default function DashboardPage() {
                 </div>
                 <ReadonlyMoney label="Total harga" value={expenseTotal} />
                 <ReadonlyMoney label="Saldo akhir BS" value={expenseBalanceAfter} />
-                <SubmitButton tone="expense">Simpan Pengeluaran</SubmitButton>
+                {submitError ? (
+                  <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                    {submitError}
+                  </p>
+                ) : null}
+                <SubmitButton tone="expense" disabled={isSubmitting || isTransactionsLoading}>
+                  {isSubmitting ? "Menyimpan..." : "Simpan Pengeluaran"}
+                </SubmitButton>
               </form>
             )}
           </section>

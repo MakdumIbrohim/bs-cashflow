@@ -27,6 +27,13 @@ export type Transaction = {
   balanceAfter: number;
 };
 
+export type CreateTransactionInput = {
+  type: Menu;
+  date: string;
+  title: string;
+  amount: number;
+};
+
 export type ProductMenu = {
   name: string;
   category: "Minuman" | "Cemilan";

@@ -139,9 +139,11 @@ export function ReadonlyMoney({ label, value }: { label: string; value: number }
 export function SubmitButton({
   children,
   tone,
+  disabled = false,
 }: {
   children: React.ReactNode;
   tone: "income" | "expense";
+  disabled?: boolean;
 }) {
   const className =
     tone === "income"
@@ -150,7 +152,11 @@ export function SubmitButton({
 
   return (
     <button
-      className={`rounded-2xl px-5 py-4 text-lg font-black text-white transition-all hover:-translate-y-0.5 focus:outline-none focus:ring-4 ${className}`}
+      type="submit"
+      disabled={disabled}
+      className={`rounded-2xl px-5 py-4 text-lg font-black text-white transition-all focus:outline-none focus:ring-4 disabled:cursor-not-allowed disabled:opacity-60 ${className} ${
+        disabled ? "" : "hover:-translate-y-0.5"
+      }`}
     >
       {children}
     </button>

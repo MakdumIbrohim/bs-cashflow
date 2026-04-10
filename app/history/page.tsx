@@ -10,7 +10,8 @@ import { FormTitle } from "../components/FormComponents";
 
 export default function HistoryPage() {
   const router = useRouter();
-  const { isLoggedIn, transactions } = useAppContext();
+  const { isLoggedIn, transactions, isTransactionsLoading, transactionError } =
+    useAppContext();
 
   // Redirect if not logged in
   React.useEffect(() => {
@@ -202,7 +203,15 @@ export default function HistoryPage() {
             </div>
 
             <div className="mt-8 space-y-6">
-              {transactions.length === 0 ? (
+              {isTransactionsLoading ? (
+                <p className="rounded-3xl border border-slate-200 bg-slate-50 p-5 text-slate-500">
+                  Memuat riwayat transaksi dari Google Apps Script...
+                </p>
+              ) : transactionError ? (
+                <p className="rounded-3xl border border-amber-200 bg-amber-50 p-5 text-amber-800">
+                  {transactionError}
+                </p>
+              ) : transactions.length === 0 ? (
                 <p className="rounded-3xl border border-slate-200 bg-slate-50 p-5 text-slate-500">
                   Belum ada transaksi. Simpan pemasukan atau pengeluaran pertama
                   untuk mulai membentuk saldo BS.
