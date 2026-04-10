@@ -167,7 +167,7 @@ export default function HistoryPage() {
                 </button>
                 <button
                   type="button"
-                  className="w-full flex justify-center items-center gap-2 rounded-2xl bg-emerald-600 px-5 py-4 text-sm sm:text-base font-black text-white shadow-lg shadow-emerald-500/30 transition-all hover:-translate-y-0.5 hover:bg-emerald-700 disabled:opacity-50"
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#135156] px-5 py-4 text-sm font-black text-white shadow-lg shadow-[rgba(19,81,86,0.3)] transition-all hover:-translate-y-0.5 hover:bg-[#0f4347] disabled:opacity-50 sm:text-base"
                   onClick={() => setIsExportModalOpen(true)}
                   disabled={transactions.length === 0}
                 >
@@ -229,7 +229,7 @@ export default function HistoryPage() {
                         <div
                           className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-xl font-black ${
                             transaction.type === "pemasukan"
-                              ? "bg-emerald-100 text-emerald-600"
+                              ? "bg-[rgba(19,81,86,0.1)] text-[#135156]"
                               : "bg-rose-100 text-rose-600"
                           }`}
                         >
@@ -250,7 +250,7 @@ export default function HistoryPage() {
                       <p
                         className={`text-lg font-black ${
                           transaction.type === "pemasukan"
-                            ? "text-emerald-600"
+                            ? "text-[#135156]"
                             : "text-rose-600"
                         }`}
                       >
@@ -286,16 +286,16 @@ export default function HistoryPage() {
             </div>
             
             <div className="mt-6 flex flex-col gap-3">
-              <label className={`flex cursor-pointer border-2 items-center gap-4 rounded-xl p-4 transition-all ${exportMode === 'filtered' ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 bg-slate-50'}`}>
-                <input type="radio" name="exportMode" value="filtered" checked={exportMode === "filtered"} onChange={() => setExportMode("filtered")} className="h-5 w-5 accent-emerald-600" />
+              <label className={`flex cursor-pointer border-2 items-center gap-4 rounded-xl p-4 transition-all ${exportMode === 'filtered' ? 'border-[#135156] bg-[rgba(19,81,86,0.08)]' : 'border-slate-200 bg-slate-50'}`}>
+                <input type="radio" name="exportMode" value="filtered" checked={exportMode === "filtered"} onChange={() => setExportMode("filtered")} className="h-5 w-5 accent-[#135156]" />
                 <div>
                   <p className="font-bold text-slate-900">Sesuai Tampilan ({filteredTransactions.length} transaksi)</p>
                   <p className="text-sm text-slate-500">Mencetak rekap sesuai dengan filter Tahun/Bulan/Hari yang sedang aktif sekarang.</p>
                 </div>
               </label>
 
-              <label className={`flex cursor-pointer border-2 items-center gap-4 rounded-xl p-4 transition-all ${exportMode === 'all' ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 bg-slate-50'}`}>
-                <input type="radio" name="exportMode" value="all" checked={exportMode === "all"} onChange={() => setExportMode("all")} className="h-5 w-5 accent-emerald-600" />
+              <label className={`flex cursor-pointer border-2 items-center gap-4 rounded-xl p-4 transition-all ${exportMode === 'all' ? 'border-[#135156] bg-[rgba(19,81,86,0.08)]' : 'border-slate-200 bg-slate-50'}`}>
+                <input type="radio" name="exportMode" value="all" checked={exportMode === "all"} onChange={() => setExportMode("all")} className="h-5 w-5 accent-[#135156]" />
                 <div>
                   <p className="font-bold text-slate-900">Semua Data ({transactions.length} transaksi)</p>
                   <p className="text-sm text-slate-500">Mencetak catatan seluruh kas dari awal aplikasi digunakan tanpa terlewat.</p>
@@ -311,7 +311,7 @@ export default function HistoryPage() {
                   setIsExportModalOpen(false);
                   setTimeout(() => window.print(), 300); // Tunggu modal hilang sebelum memanggil print dialog agar backdrop hilang
                 }} 
-                className="w-full rounded-2xl bg-emerald-600 py-3.5 font-bold text-white shadow-lg shadow-emerald-500/30 hover:-translate-y-0.5 hover:bg-emerald-700 transition"
+                className="w-full rounded-2xl bg-[#135156] py-3.5 font-bold text-white shadow-lg shadow-[rgba(19,81,86,0.3)] transition hover:-translate-y-0.5 hover:bg-[#0f4347]"
               >
                 Cetak / Simpan PDF
               </button>
@@ -343,7 +343,7 @@ export default function HistoryPage() {
                 <td className="border border-black p-3 whitespace-nowrap text-black">{formatDate(tx.date)}</td>
                 <td className="border border-black p-3 text-black font-medium">{tx.title}</td>
                 <td className="border border-black p-3 text-black capitalize">{tx.type}</td>
-                <td className="border border-black p-3 text-right whitespace-nowrap font-bold" style={{ color: tx.type === 'pemasukan' ? '#047857' : '#be123c' }}>
+                <td className="border border-black p-3 text-right whitespace-nowrap font-bold" style={{ color: tx.type === 'pemasukan' ? '#135156' : '#be123c' }}>
                   {tx.type === 'pemasukan' ? '+ ' : '- '} {formatRupiah(tx.amount)}
                 </td>
                 <td className="border border-black p-3 text-right font-bold text-black whitespace-nowrap">{formatRupiah(tx.balanceAfter)}</td>

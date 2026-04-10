@@ -14,7 +14,7 @@ export function FormTitle({
 }) {
   return (
     <div>
-      <p className="text-sm font-bold uppercase tracking-[0.3em] text-emerald-600">
+      <p className="text-sm font-bold uppercase tracking-[0.3em] text-[#135156]">
         {eyebrow}
       </p>
       <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
@@ -48,7 +48,7 @@ export function TextInput({
         {label}
       </span>
       <input
-        className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500"
+        className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all placeholder:text-slate-400 focus:border-[#135156] focus:ring-4 focus:ring-[rgba(19,81,86,0.15)] disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
@@ -75,7 +75,7 @@ export function DateInput({
         {label}
       </span>
       <input
-        className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
+        className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all focus:border-[#135156] focus:ring-4 focus:ring-[rgba(19,81,86,0.15)]"
         type="date"
         value={value}
         onChange={(event) => onChange(event.target.value)}
@@ -126,14 +126,14 @@ export function SelectInput({
         {label}
       </span>
       <div 
-        className={`mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all cursor-pointer flex justify-between items-center ${disabled ? 'opacity-60 cursor-not-allowed bg-slate-50 text-slate-500' : 'focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/15'}`}
+        className={`mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all cursor-pointer flex justify-between items-center ${disabled ? 'opacity-60 cursor-not-allowed bg-slate-50 text-slate-500' : 'focus-within:border-[#135156] focus-within:ring-4 focus-within:ring-[rgba(19,81,86,0.15)]'}`}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         tabIndex={disabled ? -1 : 0}
       >
         <span className={selectedOption ? "text-slate-900" : "text-slate-400"}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <svg className={`w-5 h-5 text-emerald-600 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+        <svg className={`w-5 h-5 text-[#135156] transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
       </div>
 
       {isOpen && !disabled && (
@@ -141,7 +141,7 @@ export function SelectInput({
           <div className="p-3 border-b border-slate-100 bg-slate-50/50">
             <input 
               type="text"
-              className="w-full px-4 py-3 text-base rounded-xl bg-white border border-slate-200 outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15 transition-all"
+              className="w-full px-4 py-3 text-base rounded-xl bg-white border border-slate-200 outline-none focus:border-[#135156] focus:ring-4 focus:ring-[rgba(19,81,86,0.15)] transition-all"
               placeholder="Ketik untuk mencari..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -154,7 +154,7 @@ export function SelectInput({
               filteredOptions.map((option) => (
                 <div 
                   key={option.value}
-                  className={`px-4 py-3 cursor-pointer rounded-xl transition-all font-medium ${value === option.value ? 'bg-emerald-50 text-emerald-700' : 'hover:bg-slate-50 text-slate-700'}`}
+                  className={`px-4 py-3 cursor-pointer rounded-xl transition-all font-medium ${value === option.value ? 'bg-[rgba(19,81,86,0.08)] text-[#135156]' : 'hover:bg-slate-50 text-slate-700'}`}
                   onClick={() => {
                     onChange(option.value);
                     setIsOpen(false);
@@ -200,7 +200,7 @@ export function SubmitButton({
 }) {
   const className =
     tone === "income"
-      ? "bg-emerald-600 hover:bg-emerald-700 focus:ring-emerald-600/25 shadow-lg shadow-emerald-600/20"
+      ? "bg-[#135156] hover:bg-[#0f4347] focus:ring-[rgba(19,81,86,0.25)] shadow-lg shadow-[rgba(19,81,86,0.2)]"
       : "bg-rose-600 hover:bg-rose-700 focus:ring-rose-600/25 shadow-lg shadow-rose-600/20";
 
   return (

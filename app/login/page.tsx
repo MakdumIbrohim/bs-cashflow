@@ -64,14 +64,14 @@ export default function LoginPage() {
     <main className="min-h-screen overflow-hidden bg-slate-50 text-slate-900">
       <section className="relative grid min-h-screen place-items-center px-6 py-10">
         {/* Abstract background elements */}
-        <div className="absolute -left-24 top-10 h-96 w-96 rounded-full bg-emerald-400/20 blur-3xl" />
-        <div className="absolute -right-20 bottom-4 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl" />
+        <div className="absolute -left-24 top-10 h-96 w-96 rounded-full bg-[rgba(19,81,86,0.18)] blur-3xl" />
+        <div className="absolute -right-20 bottom-4 h-96 w-96 rounded-full bg-[rgba(19,81,86,0.12)] blur-3xl" />
 
         <div className="relative w-full max-w-5xl overflow-hidden rounded-[2rem] border border-white/50 bg-white/70 shadow-2xl shadow-slate-200/50 backdrop-blur-xl">
           <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="flex min-h-[520px] flex-col justify-between bg-emerald-950 p-8 text-white sm:p-12">
+            <div className="flex min-h-[520px] flex-col justify-between bg-[#0b3235] p-8 text-white sm:p-12">
               <div>
-                <p className="text-sm font-bold uppercase tracking-[0.35em] text-emerald-400">
+                <p className="text-sm font-bold uppercase tracking-[0.35em] text-[#8ec3c7]">
                   BSC Cashflow
                 </p>
                 <h1 className="mt-10 max-w-xl text-5xl font-black leading-[1.05] tracking-tight sm:text-7xl">
@@ -79,10 +79,10 @@ export default function LoginPage() {
                 </h1>
               </div>
               <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
-                <p className="text-sm uppercase tracking-[0.25em] text-emerald-400">
+                <p className="text-sm uppercase tracking-[0.25em] text-[#8ec3c7]">
                   Akses internal
                 </p>
-                <p className="mt-3 text-lg leading-relaxed text-emerald-50/80">
+                <p className="mt-3 text-lg leading-relaxed text-[rgba(240,248,248,0.82)]">
                   Masuk dengan username dan password untuk langsung menuju halaman utama pengelolaan saldo.
                 </p>
               </div>
@@ -90,7 +90,7 @@ export default function LoginPage() {
 
             <div className="p-8 sm:p-12">
               <div className="mb-10">
-                <p className="text-sm font-bold uppercase tracking-[0.3em] text-emerald-600">
+                <p className="text-sm font-bold uppercase tracking-[0.3em] text-[#135156]">
                   Login
                 </p>
                 <h2 className="mt-3 text-4xl font-black tracking-tight text-slate-900">
@@ -107,7 +107,7 @@ export default function LoginPage() {
                     Username
                   </span>
                   <input
-                    className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
+                    className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all placeholder:text-slate-400 focus:border-[#135156] focus:ring-4 focus:ring-[rgba(19,81,86,0.15)]"
                     value={username}
                     onChange={(event) => setUsername(event.target.value)}
                     placeholder="Masukkan username"
@@ -120,7 +120,7 @@ export default function LoginPage() {
                     Password
                   </span>
                   <input
-                    className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
+                    className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg outline-none transition-all placeholder:text-slate-400 focus:border-[#135156] focus:ring-4 focus:ring-[rgba(19,81,86,0.15)]"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                     placeholder="Masukkan password"
@@ -136,7 +136,7 @@ export default function LoginPage() {
                 )}
 
                 <button 
-                  className="mt-2 w-full flex justify-center items-center gap-2 rounded-2xl bg-slate-900 px-5 py-4 text-lg font-black text-white shadow-lg shadow-slate-900/20 transition-all hover:-translate-y-1 hover:bg-emerald-600 hover:shadow-emerald-600/30 focus:outline-none focus:ring-4 focus:ring-emerald-600/25 disabled:opacity-50 disabled:hover:translate-y-0"
+                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 px-5 py-4 text-lg font-black text-white shadow-lg shadow-slate-900/20 transition-all hover:-translate-y-1 hover:bg-[#135156] hover:shadow-[rgba(19,81,86,0.3)] focus:outline-none focus:ring-4 focus:ring-[rgba(19,81,86,0.25)] disabled:opacity-50 disabled:hover:translate-y-0"
                   disabled={isLoading}
                 >
                   {isLoading && (

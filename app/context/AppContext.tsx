@@ -179,12 +179,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       {toast && (
         <div className="fixed top-4 left-1/2 w-[92%] max-w-md -translate-x-1/2 sm:left-auto sm:right-6 sm:top-auto sm:bottom-6 sm:w-auto sm:translate-x-0 z-50 animate-in slide-in-from-top-5 sm:slide-in-from-bottom-5 fade-in duration-300">
           <div className={`flex items-center gap-3 rounded-2xl px-5 py-4 sm:px-6 shadow-2xl backdrop-blur-md border ${
-            toast.type === "success" ? "bg-emerald-50/90 border-emerald-200 text-emerald-800 shadow-emerald-900/10" :
+            toast.type === "success" ? "border-[rgba(19,81,86,0.18)] bg-[rgba(19,81,86,0.08)] text-[#135156] shadow-[rgba(19,81,86,0.1)]" :
             toast.type === "error" ? "bg-rose-50/90 border-rose-200 text-rose-800 shadow-rose-900/10" :
             "bg-blue-50/90 border-blue-200 text-blue-800 shadow-blue-900/10"
           }`}>
             <div className={`grid h-8 w-8 place-items-center rounded-full ${
-              toast.type === "success" ? "bg-emerald-200/50" :
+              toast.type === "success" ? "bg-[rgba(19,81,86,0.14)]" :
               toast.type === "error" ? "bg-rose-200/50" :
               "bg-blue-200/50"
             }`}>

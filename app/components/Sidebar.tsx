@@ -9,7 +9,7 @@ export function Sidebar() {
 
   return (
     <aside className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/50 sm:p-6 self-start">
-      <p className="text-sm font-bold uppercase tracking-[0.3em] text-emerald-600">
+      <p className="text-sm font-bold uppercase tracking-[0.3em] text-[#135156]">
         Sidebar
       </p>
       <h2 className="mt-3 text-3xl font-black tracking-tight">Navigasi</h2>
@@ -18,7 +18,7 @@ export function Sidebar() {
           href="/dashboard"
           className={`rounded-3xl px-5 py-4 text-left transition-all ${
             pathname.startsWith("/dashboard")
-              ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30"
+              ? "bg-[#135156] text-white shadow-lg shadow-[rgba(19,81,86,0.3)]"
               : "bg-slate-100 text-slate-700 hover:bg-slate-200"
           }`}
         >
@@ -26,7 +26,7 @@ export function Sidebar() {
           <p
             className={`mt-1 text-sm ${
               pathname.startsWith("/dashboard")
-                ? "text-emerald-50"
+                ? "text-[rgba(240,248,248,0.9)]"
                 : "text-slate-500"
             }`}
           >
@@ -37,7 +37,7 @@ export function Sidebar() {
           href="/history"
           className={`rounded-3xl px-5 py-4 text-left transition-all ${
             pathname.startsWith("/history")
-              ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30"
+              ? "bg-[#135156] text-white shadow-lg shadow-[rgba(19,81,86,0.3)]"
               : "bg-slate-100 text-slate-700 hover:bg-slate-200"
           }`}
         >
@@ -45,7 +45,7 @@ export function Sidebar() {
           <p
             className={`mt-1 text-sm ${
               pathname.startsWith("/history")
-                ? "text-emerald-50"
+                ? "text-[rgba(240,248,248,0.9)]"
                 : "text-slate-500"
             }`}
           >
