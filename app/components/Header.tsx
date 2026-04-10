@@ -23,8 +23,9 @@ export function Header() {
         )}
         <button 
           onClick={logout}
-          className="rounded-full bg-slate-100 px-5 py-2.5 text-sm font-black text-slate-600 transition-colors hover:bg-slate-200"
+          className="flex items-center gap-2 rounded-full bg-rose-50 px-5 py-2.5 text-sm font-black text-rose-600 transition-colors hover:bg-rose-100"
         >
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
           Keluar
         </button>
       </div>
@@ -51,8 +52,9 @@ export function Header() {
             )}
             <button 
               onClick={logout}
-              className="rounded-full bg-white/10 px-4 py-2 text-sm font-bold backdrop-blur-md transition-colors hover:bg-white/20"
+              className="flex items-center gap-2 rounded-full bg-rose-500/20 px-4 py-2 text-sm font-bold text-rose-200 backdrop-blur-md transition-colors hover:bg-rose-500/40"
             >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
               Keluar
             </button>
           </div>
