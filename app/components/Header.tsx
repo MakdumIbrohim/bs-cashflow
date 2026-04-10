@@ -9,7 +9,7 @@ export function Header() {
   function logout() {
     setIsLoggedIn(false);
     setUser(null);
-    showToast("Berhasil logout", "info");
+    showToast("Berhasil logout", "success");
   }
 
   return (

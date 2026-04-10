@@ -181,12 +181,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           <div className={`flex items-center gap-3 rounded-2xl px-5 py-4 sm:px-6 shadow-2xl backdrop-blur-md border ${
             toast.type === "success" ? "bg-emerald-50/90 border-emerald-200 text-emerald-800 shadow-emerald-900/10" :
             toast.type === "error" ? "bg-rose-50/90 border-rose-200 text-rose-800 shadow-rose-900/10" :
-            "bg-slate-50/90 border-slate-200 text-slate-800 shadow-slate-900/10"
+            "bg-blue-50/90 border-blue-200 text-blue-800 shadow-blue-900/10"
           }`}>
             <div className={`grid h-8 w-8 place-items-center rounded-full ${
               toast.type === "success" ? "bg-emerald-200/50" :
               toast.type === "error" ? "bg-rose-200/50" :
-              "bg-slate-200/50"
+              "bg-blue-200/50"
             }`}>
               {toast.type === "success" && (
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" /></svg>
