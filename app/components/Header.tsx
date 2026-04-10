@@ -4,7 +4,7 @@ import React from "react";
 import { formatRupiah } from "../lib/utils";
 import { useAppContext } from "../context/AppContext";
 export function Header() {
-  const { balance, user, setIsLoggedIn, setUser, showToast } = useAppContext();
+  const { balance, user, setIsLoggedIn, setUser, showToast, isTransactionsLoading } = useAppContext();
 
   function logout() {
     setIsLoggedIn(false);
@@ -64,9 +64,16 @@ export function Header() {
             <p className="text-sm font-bold uppercase tracking-[0.25em] text-emerald-400">
               Saldo BS
             </p>
-            <p className="mt-4 text-4xl font-black tracking-tight sm:text-5xl">
-              {formatRupiah(balance)}
-            </p>
+            <div className="mt-4 flex h-[48px] sm:h-[60px] items-center text-4xl font-black tracking-tight sm:text-5xl">
+              {isTransactionsLoading ? (
+                <>
+                  <span>Rp</span>
+                  <div className="ml-3 mt-1 h-8 w-40 sm:h-10 animate-pulse rounded-xl bg-white/20"></div>
+                </>
+              ) : (
+                formatRupiah(balance)
+              )}
+            </div>
             <p className="mt-3 text-sm text-emerald-50/60">Total kekayaan BS saat ini</p>
           </div>
         </div>

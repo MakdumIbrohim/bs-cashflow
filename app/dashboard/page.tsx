@@ -213,7 +213,7 @@ export default function DashboardPage() {
                     {submitError}
                   </p>
                 ) : null}
-                <SubmitButton tone="income" disabled={isSubmitting || isTransactionsLoading}>
+                <SubmitButton tone="income" disabled={isSubmitting}>
                   {isSubmitting ? "Menyimpan..." : "Simpan Pemasukan"}
                 </SubmitButton>
               </form>
@@ -258,7 +258,7 @@ export default function DashboardPage() {
                     {submitError}
                   </p>
                 ) : null}
-                <SubmitButton tone="expense" disabled={isSubmitting || isTransactionsLoading}>
+                <SubmitButton tone="expense" disabled={isSubmitting}>
                   {isSubmitting ? "Menyimpan..." : "Simpan Pengeluaran"}
                 </SubmitButton>
               </form>
