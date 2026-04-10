@@ -6,7 +6,7 @@ import { useAppContext } from "../context/AppContext";
 import { formatRupiah, formatDate, formatMonth } from "../lib/utils";
 import { Header } from "../components/Header";
 import { Sidebar } from "../components/Sidebar";
-import { FormTitle } from "../components/FormComponents";
+import { FormTitle, SelectInput } from "../components/FormComponents";
 
 export default function HistoryPage() {
   const router = useRouter();
@@ -24,35 +24,49 @@ export default function HistoryPage() {
   const [historyMonthFilter, setHistoryMonthFilter] = useState("");
   const [historyDayFilter, setHistoryDayFilter] = useState("");
 
-  const uniqueTransactionYears = useMemo(
-    () =>
-      Array.from(
-        new Set(transactions.map((transaction) => transaction.date.slice(0, 4))),
-      ).sort((a, b) => Number(b) - Number(a)),
-    [transactions],
-  );
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+  const currentDay = now.getDate();
+
+  const availableYears = useMemo(() => {
+    const years = [];
+    for (let y = currentYear; y >= 2025; y--) {
+      years.push(String(y));
+    }
+    return years;
+  }, [currentYear]);
 
   const availableMonths = useMemo(() => {
     if (!historyYearFilter) return [];
-    return Array.from(
-      new Set(
-        transactions
-          .filter((transaction) => transaction.date.startsWith(historyYearFilter))
-          .map((transaction) => transaction.date.slice(0, 7)),
-      ),
-    ).sort((a, b) => b.localeCompare(a));
-  }, [historyYearFilter, transactions]);
+    
+    const isCurrentYear = historyYearFilter === String(currentYear);
+    const maxMonth = isCurrentYear ? currentMonth : 12;
+
+    const months = [];
+    for (let m = maxMonth; m >= 1; m--) {
+      months.push(`${historyYearFilter}-${String(m).padStart(2, "0")}`);
+    }
+    return months;
+  }, [historyYearFilter, currentYear, currentMonth]);
 
   const availableDays = useMemo(() => {
     if (!historyMonthFilter) return [];
-    return Array.from(
-      new Set(
-        transactions
-          .filter((transaction) => transaction.date.startsWith(historyMonthFilter))
-          .map((transaction) => transaction.date),
-      ),
-    ).sort((a, b) => b.localeCompare(a));
-  }, [historyMonthFilter, transactions]);
+    
+    const [yearStr, monthStr] = historyMonthFilter.split("-");
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10);
+
+    const isCurrentMonth = year === currentYear && month === currentMonth;
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const maxDay = isCurrentMonth ? currentDay : daysInMonth;
+
+    const days = [];
+    for (let d = maxDay; d >= 1; d--) {
+      days.push(`${historyMonthFilter}-${String(d).padStart(2, "0")}`);
+    }
+    return days;
+  }, [historyMonthFilter, currentYear, currentMonth, currentDay]);
 
   const filteredTransactions = useMemo(() => {
     let currentTransactions = transactions;
@@ -106,99 +120,39 @@ export default function HistoryPage() {
               title="Riwayat Transaksi"
               description="Lihat semua transaksi, lalu persempit berdasarkan tahun, bulan, dan hari."
             />
-            <div className="mt-8 grid gap-5 xl:grid-cols-[1.2fr_1fr_1fr_1fr]">
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-                <p className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
-                  Semua riwayat
-                </p>
+            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              <SelectInput
+                label="Tahun"
+                value={historyYearFilter}
+                onChange={selectHistoryYear}
+                placeholder="Semua Tahun"
+                options={availableYears.map((year) => ({ label: year, value: year }))}
+              />
+              <SelectInput
+                label="Bulan"
+                value={historyMonthFilter}
+                onChange={selectHistoryMonth}
+                placeholder={historyYearFilter ? "Semua Bulan" : "Pilih tahun dulu"}
+                options={availableMonths.map((month) => ({ label: formatMonth(month), value: month }))}
+                disabled={!historyYearFilter}
+              />
+              <SelectInput
+                label="Tanggal (Hari)"
+                value={historyDayFilter}
+                onChange={setHistoryDayFilter}
+                placeholder={historyMonthFilter ? "Semua Tanggal" : "Pilih bulan dulu"}
+                options={availableDays.map((day) => ({ label: formatDate(day), value: day }))}
+                disabled={!historyMonthFilter}
+              />
+              <div className="flex items-end">
                 <button
                   type="button"
-                  className={`mt-4 w-full rounded-2xl border px-4 py-3 text-sm font-black transition-all ${
-                    historyYearFilter === "" &&
-                    historyMonthFilter === "" &&
-                    historyDayFilter === ""
-                      ? "border-slate-900 bg-slate-900 text-white shadow-md shadow-slate-900/20"
-                      : "border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-100"
-                  }`}
+                  className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-lg font-black text-slate-700 shadow-sm transition-all hover:bg-slate-100 disabled:opacity-50"
                   onClick={resetHistoryFilters}
+                  disabled={!historyYearFilter && !historyMonthFilter && !historyDayFilter}
                 >
-                  Tampilkan semua transaksi
+                  Reset Filter
                 </button>
-              </div>
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-                <p className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
-                  Tahun
-                </p>
-                <div className="mt-4 flex flex-wrap gap-3">
-                  {uniqueTransactionYears.map((year) => (
-                    <button
-                      type="button"
-                      className={`rounded-2xl border px-4 py-3 text-sm font-black transition-all ${
-                        historyYearFilter === year
-                          ? "border-emerald-600 bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
-                          : "border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-100"
-                      }`}
-                      key={year}
-                      onClick={() => selectHistoryYear(year)}
-                    >
-                      {year}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-                <p className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
-                  Bulan
-                </p>
-                <div className="mt-4 flex flex-wrap gap-3">
-                  {availableMonths.length === 0 ? (
-                    <p className="text-sm text-slate-500">
-                      Pilih tahun terlebih dahulu.
-                    </p>
-                  ) : (
-                    availableMonths.map((month) => (
-                      <button
-                        type="button"
-                        className={`rounded-2xl border px-4 py-3 text-sm font-black transition-all ${
-                          historyMonthFilter === month
-                            ? "border-emerald-600 bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
-                            : "border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-100"
-                        }`}
-                        key={month}
-                        onClick={() => selectHistoryMonth(month)}
-                      >
-                        {formatMonth(month)}
-                      </button>
-                    ))
-                  )}
-                </div>
-              </div>
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-                <p className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
-                  Hari
-                </p>
-                <div className="mt-4 flex flex-wrap gap-3">
-                  {availableDays.length === 0 ? (
-                    <p className="text-sm text-slate-500">
-                      Pilih bulan terlebih dahulu.
-                    </p>
-                  ) : (
-                    availableDays.map((day) => (
-                      <button
-                        type="button"
-                        className={`rounded-2xl border px-4 py-3 text-sm font-black transition-all ${
-                          historyDayFilter === day
-                            ? "border-emerald-600 bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
-                            : "border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-100"
-                        }`}
-                        key={day}
-                        onClick={() => setHistoryDayFilter(day)}
-                      >
-                        {formatDate(day)}
-                      </button>
-                    ))
-                  )}
-                </div>
               </div>
             </div>
 
