@@ -109,6 +109,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       date: income.tanggal,
       title: income.namaMenu,
       amount: incomeTotal,
+      kategori: income.kategori,
+      unit: income.unit,
+      harga_satuan: income.hargaSatuan,
     });
   };
 
@@ -118,6 +121,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       date: expense.tanggal,
       title: expense.keterangan,
       amount: expenseTotal,
+      unit: expense.unit,
+      harga_satuan: expense.hargaSatuan,
+      kategori: "Operasional", // Atau default jika tidak ada kategori di ExpenseForm
     });
   };
 

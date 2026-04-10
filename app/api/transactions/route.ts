@@ -107,20 +107,22 @@ export async function GET() {
 export async function POST(request: Request) {
   const body = (await request.json()) as CreateTransactionInput;
 
-  const upstreamBody = new URLSearchParams({
-    action: "create",
-    type: body.type,
-    date: body.date,
-    title: body.title,
-    amount: String(body.amount),
-  });
+  const upstreamBody = {
+    tanggal: body.date,
+    keterangan: body.title,
+    tipe: body.type,
+    kategori: body.kategori || "",
+    unit: body.unit || "",
+    harga_satuan: body.harga_satuan || "",
+    harga_total: body.amount,
+  };
 
   const response = await fetch(getGoogleAppsScriptUrl(), {
     method: "POST",
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+      "Content-Type": "text/plain;charset=utf-8",
     },
-    body: upstreamBody.toString(),
+    body: JSON.stringify(upstreamBody),
     cache: "no-store",
   });
 

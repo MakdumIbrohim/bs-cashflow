@@ -32,6 +32,9 @@ export type CreateTransactionInput = {
   date: string;
   title: string;
   amount: number;
+  kategori?: string;
+  unit?: string | number;
+  harga_satuan?: string | number;
 };
 
 export type ProductMenu = {
