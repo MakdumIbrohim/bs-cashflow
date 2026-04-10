@@ -75,7 +75,7 @@ export const productMenus: ProductMenu[] = [
   { name: "Soget (sosis nuget)", category: "Cemilan", price: 10000 },
   { name: "Mix Plate", category: "Cemilan", price: 10000 },
   { name: "Piscok", category: "Cemilan", price: 10000 },
-  { name: "Es Teh", category: "Cemilan", price: 10000 },
+  { name: "Es Teh", category: "Minuman", price: 10000 },
 ];
 
 export const initialTransactions: Transaction[] = [
