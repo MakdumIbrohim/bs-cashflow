@@ -151,6 +151,12 @@ export default function HistoryPage() {
     : historyMonthFilter
       ? formatMonth(historyMonthFilter)
       : historyYearFilter || "Semua waktu";
+  const exportTransactions =
+    exportMode === "all" ? transactions : filteredTransactions;
+  const totalExportIncome = exportTransactions
+    .filter((transaction) => transaction.type === "pemasukan")
+    .reduce((total, transaction) => total + transaction.amount, 0);
+  const exportPeriodLabel = exportMode === "all" ? "Semua waktu" : activeFilterLabel;
 
   const totalPages = Math.max(1, Math.ceil(filteredTransactions.length / TRANSACTIONS_PER_PAGE));
   const paginatedTransactions = useMemo(() => {
@@ -467,6 +473,18 @@ export default function HistoryPage() {
               </label>
             </div>
 
+            <div className="mt-6 rounded-3xl border border-emerald-100 bg-emerald-50 p-5">
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-700">
+                Total Pemasukan PDF
+              </p>
+              <p className="mt-2 text-3xl font-black text-emerald-700">
+                {formatRupiah(totalExportIncome)}
+              </p>
+              <p className="mt-1 text-sm font-medium text-emerald-800/80">
+                Periode: {exportPeriodLabel} - {exportTransactions.length} transaksi akan dicetak
+              </p>
+            </div>
+
             <div className="mt-8 flex gap-3">
               <button type="button" onClick={() => setIsExportModalOpen(false)} className="w-full rounded-2xl bg-slate-100 py-3.5 font-bold text-slate-700 hover:bg-slate-200">Batal</button>
               <button 
@@ -558,7 +576,13 @@ export default function HistoryPage() {
       <div className="hidden print:block absolute top-0 left-0 w-full min-h-screen z-[9999] bg-white p-8 font-sans">
         <div className="border-b-[3px] border-black pb-4 mb-6">
           <h1 className="text-2xl font-black uppercase text-black">Laporan Transaksi Kas BS Cashflow</h1>
-          <p className="text-black text-sm mt-1">Dicetak pada: {formatDate(new Date().toISOString())} — Filter: {exportMode === 'all' ? 'Semua Waktu' : 'Disaring'}</p>
+          <p className="text-black text-sm mt-1">Dicetak pada: {formatDate(new Date().toISOString())} - Filter: {exportMode === 'all' ? 'Semua Waktu' : exportPeriodLabel}</p>
+        </div>
+
+        <div className="mb-6 border border-black p-4">
+          <p className="text-sm font-bold uppercase text-black">Ringkasan Pemasukan</p>
+          <p className="mt-2 text-xl font-black text-black">Total Pemasukan: {formatRupiah(totalExportIncome)}</p>
+          <p className="mt-1 text-sm text-black">Jumlah transaksi dicetak: {exportTransactions.length}</p>
         </div>
         
         <table className="w-full text-left border-collapse border border-black text-sm">
@@ -572,7 +596,7 @@ export default function HistoryPage() {
             </tr>
           </thead>
           <tbody>
-            {(exportMode === "all" ? transactions : filteredTransactions).map((tx) => (
+            {exportTransactions.map((tx) => (
               <tr key={tx.id}>
                 <td className="border border-black p-3 whitespace-nowrap text-black">{formatDate(tx.date)}</td>
                 <td className="border border-black p-3 text-black font-medium">{tx.title}</td>
