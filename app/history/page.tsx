@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useDeferredValue, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "../context/AppContext";
 import { formatRupiah, formatDate, formatMonth } from "../lib/utils";
@@ -8,6 +8,8 @@ import { Header } from "../components/Header";
 import { Sidebar } from "../components/Sidebar";
 import { FormTitle, SelectInput } from "../components/FormComponents";
 import type { Transaction } from "../lib/types";
+
+const TRANSACTIONS_PER_PAGE = 6;
 
 export default function HistoryPage() {
   const router = useRouter();
@@ -24,9 +26,12 @@ export default function HistoryPage() {
   const [historyYearFilter, setHistoryYearFilter] = useState("");
   const [historyMonthFilter, setHistoryMonthFilter] = useState("");
   const [historyDayFilter, setHistoryDayFilter] = useState("");
+  const [historySearch, setHistorySearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [exportMode, setExportMode] = useState<"all" | "filtered">("filtered");
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const deferredHistorySearch = useDeferredValue(historySearch);
 
   const now = new Date();
   const currentYear = now.getFullYear();
@@ -72,7 +77,7 @@ export default function HistoryPage() {
     return days;
   }, [historyMonthFilter, currentYear, currentMonth, currentDay]);
 
-  const filteredTransactions = useMemo(() => {
+  const dateFilteredTransactions = useMemo(() => {
     if (!historyYearFilter && !historyMonthFilter && !historyDayFilter) {
       return transactions;
     }
@@ -102,10 +107,60 @@ export default function HistoryPage() {
     });
   }, [historyDayFilter, historyMonthFilter, historyYearFilter, transactions]);
 
+  const filteredTransactions = useMemo(() => {
+    const normalizedSearch = deferredHistorySearch.trim().toLowerCase();
+
+    if (!normalizedSearch) {
+      return dateFilteredTransactions;
+    }
+
+    return dateFilteredTransactions.filter((transaction) => {
+      const searchableText = [
+        transaction.title,
+        transaction.type,
+        transaction.date,
+        formatDate(transaction.date),
+        transaction.category,
+        transaction.unit,
+        transaction.unitPrice,
+        transaction.amount,
+        transaction.balanceAfter,
+      ]
+        .filter((value) => value !== undefined && value !== null)
+        .join(" ")
+        .toLowerCase();
+
+      return searchableText.includes(normalizedSearch);
+    });
+  }, [dateFilteredTransactions, deferredHistorySearch]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredTransactions.length / TRANSACTIONS_PER_PAGE));
+  const paginatedTransactions = useMemo(() => {
+    const startIndex = (currentPage - 1) * TRANSACTIONS_PER_PAGE;
+    return filteredTransactions.slice(startIndex, startIndex + TRANSACTIONS_PER_PAGE);
+  }, [currentPage, filteredTransactions]);
+  const firstVisibleTransaction = filteredTransactions.length
+    ? (currentPage - 1) * TRANSACTIONS_PER_PAGE + 1
+    : 0;
+  const lastVisibleTransaction = Math.min(
+    currentPage * TRANSACTIONS_PER_PAGE,
+    filteredTransactions.length,
+  );
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [historyDayFilter, historyMonthFilter, historySearch, historyYearFilter]);
+
+  React.useEffect(() => {
+    setCurrentPage((page) => Math.min(page, totalPages));
+  }, [totalPages]);
+
   function resetHistoryFilters() {
     setHistoryYearFilter("");
     setHistoryMonthFilter("");
     setHistoryDayFilter("");
+    setHistorySearch("");
+    setCurrentPage(1);
   }
   function selectHistoryYear(year: string) {
     setHistoryYearFilter(year);
@@ -140,8 +195,33 @@ export default function HistoryPage() {
             <FormTitle
               eyebrow="Riwayat"
               title="Riwayat Transaksi"
-              description="Lihat semua transaksi, lalu persempit berdasarkan tahun, bulan, dan hari."
+              description="Cari transaksi, lalu persempit berdasarkan tahun, bulan, dan hari."
             />
+            <label className="mt-8 block">
+              <span className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
+                Cari riwayat
+              </span>
+              <div className="mt-2 flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 transition-all focus-within:border-[#135156] focus-within:ring-4 focus-within:ring-[rgba(19,81,86,0.15)]">
+                <svg className="h-5 w-5 shrink-0 text-[#135156]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" />
+                </svg>
+                <input
+                  className="w-full bg-transparent text-lg outline-none placeholder:text-slate-400"
+                  value={historySearch}
+                  onChange={(event) => setHistorySearch(event.target.value)}
+                  placeholder="Cari nama pesanan, tipe, tanggal, kategori, nominal..."
+                />
+                {historySearch ? (
+                  <button
+                    type="button"
+                    className="rounded-full bg-slate-100 px-3 py-1 text-sm font-bold text-slate-500 transition hover:bg-slate-200 hover:text-slate-900"
+                    onClick={() => setHistorySearch("")}
+                  >
+                    Hapus
+                  </button>
+                ) : null}
+              </div>
+            </label>
             <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               <SelectInput
                 label="Tahun"
@@ -171,7 +251,7 @@ export default function HistoryPage() {
                   type="button"
                   className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm sm:text-base font-black text-slate-700 shadow-sm transition-all hover:bg-slate-100 disabled:opacity-50"
                   onClick={resetHistoryFilters}
-                  disabled={!historyYearFilter && !historyMonthFilter && !historyDayFilter}
+                  disabled={!historyYearFilter && !historyMonthFilter && !historyDayFilter && !historySearch}
                 >
                   Reset Filter
                 </button>
@@ -229,7 +309,7 @@ export default function HistoryPage() {
                   Tidak ada transaksi pada tanggal yang dipilih.
                 </p>
               ) : (
-                filteredTransactions.map((transaction) => (
+                paginatedTransactions.map((transaction) => (
                   <button
                     type="button"
                     className="w-full rounded-3xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#135156]/30 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-[rgba(19,81,86,0.15)]"
@@ -280,6 +360,35 @@ export default function HistoryPage() {
                 ))
               )}
             </div>
+
+            {filteredTransactions.length > 0 ? (
+              <div className="mt-8 flex flex-col gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm font-bold text-slate-600">
+                  Menampilkan {firstVisibleTransaction}-{lastVisibleTransaction} dari {filteredTransactions.length} transaksi
+                </p>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                    onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </button>
+                  <span className="rounded-2xl bg-white px-4 py-3 text-sm font-black text-[#135156]">
+                    {currentPage} / {totalPages}
+                  </span>
+                  <button
+                    type="button"
+                    className="w-full rounded-2xl bg-[#135156] px-4 py-3 text-sm font-black text-white transition hover:bg-[#0f4347] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                    onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            ) : null}
           </section>
         </div>
       </section>
