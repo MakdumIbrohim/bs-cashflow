@@ -133,6 +133,24 @@ export default function HistoryPage() {
       return searchableText.includes(normalizedSearch);
     });
   }, [dateFilteredTransactions, deferredHistorySearch]);
+  const totalFilteredIncome = useMemo(
+    () =>
+      filteredTransactions
+        .filter((transaction) => transaction.type === "pemasukan")
+        .reduce((total, transaction) => total + transaction.amount, 0),
+    [filteredTransactions],
+  );
+  const filteredIncomeCount = useMemo(
+    () =>
+      filteredTransactions.filter((transaction) => transaction.type === "pemasukan")
+        .length,
+    [filteredTransactions],
+  );
+  const activeFilterLabel = historyDayFilter
+    ? formatDate(historyDayFilter)
+    : historyMonthFilter
+      ? formatMonth(historyMonthFilter)
+      : historyYearFilter || "Semua waktu";
 
   const totalPages = Math.max(1, Math.ceil(filteredTransactions.length / TRANSACTIONS_PER_PAGE));
   const paginatedTransactions = useMemo(() => {
@@ -264,6 +282,28 @@ export default function HistoryPage() {
                   <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                   Ekspor PDF
                 </button>
+              </div>
+            </div>
+
+            <div className="mt-6 overflow-hidden rounded-3xl border border-emerald-100 bg-emerald-50 p-5 sm:p-6">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-[0.25em] text-emerald-700">
+                    Total Pemasukan
+                  </p>
+                  <p className="mt-2 text-sm font-medium text-emerald-800/80">
+                    Periode: {activeFilterLabel}
+                    {historySearch.trim() ? ` - Pencarian: "${historySearch.trim()}"` : ""}
+                  </p>
+                </div>
+                <div className="sm:text-right">
+                  <p className="text-3xl font-black tracking-tight text-emerald-700 sm:text-4xl">
+                    {formatRupiah(totalFilteredIncome)}
+                  </p>
+                  <p className="mt-1 text-sm font-bold text-emerald-800/70">
+                    Dari {filteredIncomeCount} transaksi pemasukan
+                  </p>
+                </div>
               </div>
             </div>
 
