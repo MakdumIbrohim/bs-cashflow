@@ -7,6 +7,7 @@ import { formatRupiah, formatDate, formatMonth } from "../lib/utils";
 import { Header } from "../components/Header";
 import { Sidebar } from "../components/Sidebar";
 import { FormTitle, SelectInput } from "../components/FormComponents";
+import type { Transaction } from "../lib/types";
 
 export default function HistoryPage() {
   const router = useRouter();
@@ -25,6 +26,7 @@ export default function HistoryPage() {
   const [historyDayFilter, setHistoryDayFilter] = useState("");
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [exportMode, setExportMode] = useState<"all" | "filtered">("filtered");
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
   const now = new Date();
   const currentYear = now.getFullYear();
@@ -113,6 +115,14 @@ export default function HistoryPage() {
   function selectHistoryMonth(month: string) {
     setHistoryMonthFilter(month);
     setHistoryDayFilter("");
+  }
+
+  function formatOptionalMoney(value?: number) {
+    return value && value > 0 ? formatRupiah(value) : "-";
+  }
+
+  function formatOptionalText(value?: string | number) {
+    return value ? String(value) : "-";
   }
 
   if (!isLoggedIn) return null;
@@ -220,9 +230,11 @@ export default function HistoryPage() {
                 </p>
               ) : (
                 filteredTransactions.map((transaction) => (
-                  <article
-                    className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+                  <button
+                    type="button"
+                    className="w-full rounded-3xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#135156]/30 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-[rgba(19,81,86,0.15)]"
                     key={transaction.id}
+                    onClick={() => setSelectedTransaction(transaction)}
                   >
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                       <div className="flex items-start gap-4">
@@ -244,6 +256,9 @@ export default function HistoryPage() {
                           <span className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-600">
                             {formatDate(transaction.date)}
                           </span>
+                          <span className="rounded-full bg-[rgba(19,81,86,0.08)] px-3 py-1 text-sm font-semibold text-[#135156]">
+                            Detail
+                          </span>
                         </div>
                       </div>
                       </div>
@@ -261,7 +276,7 @@ export default function HistoryPage() {
                     <p className="mt-4 text-sm text-slate-500">
                       Saldo akhir: {formatRupiah(transaction.balanceAfter)}
                     </p>
-                  </article>
+                  </button>
                 ))
               )}
             </div>
@@ -315,6 +330,76 @@ export default function HistoryPage() {
               >
                 Simpan PDF
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Detail Transaksi */}
+      {selectedTransaction && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 print:hidden">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSelectedTransaction(null)}></div>
+          <div className="relative w-full max-w-lg rounded-[2rem] bg-white p-6 shadow-2xl sm:p-8 animate-in zoom-in-95 duration-200">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className={`text-sm font-bold uppercase tracking-[0.25em] ${
+                  selectedTransaction.type === "pemasukan" ? "text-emerald-600" : "text-rose-600"
+                }`}>
+                  Detail {selectedTransaction.type}
+                </p>
+                <h2 className="mt-3 text-2xl font-black text-slate-900">
+                  {selectedTransaction.title}
+                </h2>
+              </div>
+              <button
+                type="button"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200 hover:text-slate-900"
+                onClick={() => setSelectedTransaction(null)}
+                aria-label="Tutup detail transaksi"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="mt-6 rounded-3xl border border-slate-100 bg-slate-50 p-5">
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Total</span>
+                <span className={`text-2xl font-black ${
+                  selectedTransaction.type === "pemasukan" ? "text-emerald-600" : "text-rose-600"
+                }`}>
+                  {selectedTransaction.type === "pemasukan" ? "+" : "-"}
+                  {formatRupiah(selectedTransaction.amount)}
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-6 grid gap-3 text-sm sm:text-base">
+              <div className="flex justify-between gap-4 border-b border-slate-100 pb-3">
+                <span className="text-slate-500">Tanggal</span>
+                <span className="font-bold text-slate-900">{formatDate(selectedTransaction.date)}</span>
+              </div>
+              <div className="flex justify-between gap-4 border-b border-slate-100 pb-3">
+                <span className="text-slate-500">Tipe</span>
+                <span className="font-bold capitalize text-slate-900">{selectedTransaction.type}</span>
+              </div>
+              <div className="flex justify-between gap-4 border-b border-slate-100 pb-3">
+                <span className="text-slate-500">Kategori</span>
+                <span className="font-bold text-slate-900">{formatOptionalText(selectedTransaction.category)}</span>
+              </div>
+              <div className="flex justify-between gap-4 border-b border-slate-100 pb-3">
+                <span className="text-slate-500">Unit</span>
+                <span className="font-bold text-slate-900">{formatOptionalText(selectedTransaction.unit)}</span>
+              </div>
+              <div className="flex justify-between gap-4 border-b border-slate-100 pb-3">
+                <span className="text-slate-500">Harga satuan</span>
+                <span className="font-bold text-slate-900">{formatOptionalMoney(selectedTransaction.unitPrice)}</span>
+              </div>
+              <div className="flex justify-between gap-4 pt-1">
+                <span className="font-bold text-slate-500">Saldo akhir</span>
+                <span className="font-black text-slate-900">{formatRupiah(selectedTransaction.balanceAfter)}</span>
+              </div>
             </div>
           </div>
         </div>

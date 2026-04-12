@@ -127,6 +127,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       title: input.title,
       amount: input.amount,
       balanceAfter: nextBalance,
+      category: input.kategori,
+      unit: input.unit,
+      unitPrice:
+        typeof input.harga_satuan === "number"
+          ? input.harga_satuan
+          : Number(String(input.harga_satuan ?? "").replace(/[^0-9.-]/g, "")) || 0,
     };
 
     setTransactionError("");

@@ -16,6 +16,12 @@ function toMenu(value: unknown): Menu {
   return value === "pengeluaran" ? "pengeluaran" : "pemasukan";
 }
 
+function toStringValue(value: unknown) {
+  if (typeof value === "string") return value;
+  if (typeof value === "number") return String(value);
+  return "";
+}
+
 function normalizeTransaction(item: unknown, fallbackIndex: number): Transaction | null {
   if (!item || typeof item !== "object") return null;
 
@@ -51,6 +57,16 @@ function normalizeTransaction(item: unknown, fallbackIndex: number): Transaction
             : typeof record["nama_menu / keterangan"] === "string"
               ? record["nama_menu / keterangan"]
               : "";
+  const category = toStringValue(
+    record.category ?? record.kategori ?? record.Kategori,
+  );
+  const unit = toStringValue(record.unit ?? record.Unit ?? record.qty ?? record.Qty);
+  const unitPrice = toNumber(
+    record.unitPrice ??
+      record.hargaSatuan ??
+      record.harga_satuan ??
+      record["Harga Satuan"],
+  );
 
   if (!date || !title) return null;
 
@@ -61,6 +77,9 @@ function normalizeTransaction(item: unknown, fallbackIndex: number): Transaction
     title,
     amount,
     balanceAfter,
+    category,
+    unit,
+    unitPrice,
   };
 }
 

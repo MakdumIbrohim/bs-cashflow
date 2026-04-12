@@ -25,6 +25,9 @@ export type Transaction = {
   title: string;
   amount: number;
   balanceAfter: number;
+  category?: string;
+  unit?: string | number;
+  unitPrice?: number;
 };
 
 export type CreateTransactionInput = {

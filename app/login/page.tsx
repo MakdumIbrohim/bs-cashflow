@@ -39,10 +39,16 @@ export default function LoginPage() {
         body: JSON.stringify({ username, password }),
       });
 
-      const data = await res.json();
+      const data = (await res.json()) as {
+        error?: string;
+        user?: Parameters<typeof setUser>[0];
+      };
 
       if (!res.ok) {
         throw new Error(data.error || "Login gagal.");
+      }
+      if (!data.user) {
+        throw new Error("Data user tidak ditemukan.");
       }
 
       // which auto-saves to localStorage
@@ -51,8 +57,8 @@ export default function LoginPage() {
       showToast("Berhasil masuk ke Dashboard!", "success");
       router.push("/dashboard");
 
-    } catch (error: any) {
-      setErrorMsg(error.message || "Terjadi kesalahan sistem.");
+    } catch (error) {
+      setErrorMsg(error instanceof Error ? error.message : "Terjadi kesalahan sistem.");
     } finally {
       setIsLoading(false);
     }

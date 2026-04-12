@@ -23,7 +23,6 @@ export default function DashboardPage() {
     balance,
     addIncome,
     addExpense,
-    isTransactionsLoading,
     transactionError,
     showToast,
   } = useAppContext();
