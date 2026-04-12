@@ -86,7 +86,7 @@ Keterangan:
   key publishable/anon Supabase untuk akses client.
 
 - `GOOGLE_APPS_SCRIPT_URL`
-  URL web app Google Apps Script untuk transaksi. Jika tidak diisi, aplikasi memakai URL default yang sudah ada di source code.
+  URL web app Google Apps Script untuk transaksi. Wajib diisi karena aplikasi membaca dan menyimpan transaksi melalui endpoint ini.
 
 ## Menjalankan Project
 

@@ -1,6 +1,9 @@
-const DEFAULT_GOOGLE_APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbwKSxtsmw-E52NQrEos8URCm3k7ogKxYhkBSmZFojRyxWHpVAOUp3FYyI9RFpCcEzRSuw/exec";
-
 export function getGoogleAppsScriptUrl() {
-  return process.env.GOOGLE_APPS_SCRIPT_URL || DEFAULT_GOOGLE_APPS_SCRIPT_URL;
+  const url = process.env.GOOGLE_APPS_SCRIPT_URL;
+
+  if (!url) {
+    throw new Error("GOOGLE_APPS_SCRIPT_URL belum diatur di environment variables.");
+  }
+
+  return url;
 }
